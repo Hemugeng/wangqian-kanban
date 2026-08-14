@@ -412,11 +412,8 @@
                     return t + ' ' + formatNumber(avg);
                 });
             } else {
-                // 全部/多项目：加权汇总为单一综合均价（不展开业态）
-                const totalSw = Object.values(priceAgg).reduce((s, o) => s + o.sw, 0);
-                const totalW  = Object.values(priceAgg).reduce((s, o) => s + o.w, 0);
-                const overallAvg = totalW > 0 ? Math.round(totalSw / totalW) : 0;
-                priceLines = ['综合 ' + formatNumber(overallAvg)];
+                // 全部/多项目：未筛选项目时整盘网签均价保持空白（不展示任何价格）
+                priceLines = [];
             }
 
             const cards = [
@@ -424,7 +421,7 @@
                 { label: '供应套数',     value: formatNumber(agg.totalSupply), color: 'cyan' },
                 { label: '网签套数',     value: formatNumber(agg.totalSigned), color: 'green' },
                 { label: '整盘网签均价', priceLines: priceLines,             color: 'indigo' },
-                { label: '平均去化率',   value: formatPercent(avgConversion),  color: 'emerald' },
+                { label: '已推网签进度', value: formatPercent(avgConversion),  color: 'emerald' },
                 { label: '整盘存量(套)', value: formatNumber(agg.totalStock),  color: 'orange' },
                 { label: '上周网签数',   value: formatNumber(lastWeekSigned),  color: 'purple', sub: wkNum ? 'W' + wkNum + ' ' + weekRange : '' }
             ];
@@ -484,7 +481,7 @@
                     <th class="number-cell" style="${freezeStyle(5, 'top:0; z-index:30; ')}">供应套数</th>
                     <th class="number-cell" style="${freezeStyle(6, 'top:0; z-index:30; ')}">整体网签</th>
                     <th class="number-cell" style="${freezeStyle(7, 'top:0; z-index:30; ')}">网签单价</th>
-                    <th class="number-cell" style="${freezeStyle(8, 'top:0; z-index:30; ')}">去化率</th>
+                    <th class="number-cell" style="${freezeStyle(8, 'top:0; z-index:30; ')}">已推网签进度</th>
                     ${weekColumns.map(w => {
                         const m = w.match(/第(\d+)周/);
                         const wkNum = m ? m[1] : '';
