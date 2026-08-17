@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>基础市场监测升级 · 先行-同步-滞后信号仪表盘（Demo）</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#181b20; --card2:#1f2329; --border:#2a2f37;
+    --text:#e8eaed; --muted:#9aa3ad; --faint:#6b7480;
+    --blue:#5b8def; --teal:#34c3a0; --green:#30b46e; --yellow:#e6b31e; --red:#e5534b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;font-size:13px;line-height:1.6;padding:24px 28px 48px}
+  .wrap{max-width:1180px;margin:0 auto}
+  header{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px}
+  h1{font-size:17px;font-weight:500;letter-spacing:.3px}
+  .sub{color:var(--muted);font-size:12px;margin-top:4px}
+  .controls{display:flex;align-items:center;gap:12px}
+  .tag{font-size:11px;color:var(--yellow);border:1px solid var(--yellow);border-radius:6px;padding:2px 8px;opacity:.85}
+  .btn{background:var(--card2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-size:12.5px;cursor:pointer;transition:border-color .15s}
+  .btn:hover{border-color:var(--blue)}
+  select{background:var(--card2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-size:13px;outline:none;cursor:pointer}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px}
+  .sec{margin-bottom:18px}
+  .side-by-side{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+  .side-by-side .sec{margin-bottom:0}
+  .sec-title{font-size:13px;font-weight:500;color:var(--muted);margin-bottom:12px;letter-spacing:.5px}
+  .sec-title b{color:var(--text);font-weight:500}
+
+  /* 综合研判 */
+  .verdict{display:grid;grid-template-columns:220px 1fr;gap:20px;align-items:center}
+  .gauge{display:flex;align-items:center;gap:16px}
+  .gauge-num{font-size:44px;font-weight:500;line-height:1;color:var(--teal)}
+  .gauge-label{color:var(--muted);font-size:12px}
+  .bar{width:100%;height:8px;border-radius:6px;background:var(--card2);margin-top:10px;position:relative;overflow:hidden}
+  .bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--red),var(--yellow),var(--teal))}
+  .bar-mark{position:absolute;top:-4px;width:2px;height:16px;background:var(--text);border-radius:2px}
+  .verdict-main .headline{font-size:15px;font-weight:500;margin-bottom:6px}
+  .verdict-main .desc{color:var(--muted);font-size:12.5px;margin-bottom:12px}
+  .layer-sum{display:flex;gap:8px;flex-wrap:wrap}
+  .layer-pill{display:flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px}
+  .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  .dot.g{background:var(--green)} .dot.y{background:var(--yellow)} .dot.r{background:var(--red)}
+
+  /* 三层信号 */
+  .layer{margin-bottom:14px}
+  .layer-head{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+  .layer-name{font-size:13.5px;font-weight:500}
+  .layer-time{font-size:11.5px;color:var(--faint)}
+  .layer-time.lead{color:var(--yellow)}
+  .ind-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .ind-grid.sync{grid-template-columns:repeat(6,1fr)}
+  .ind-grid.lag{grid-template-columns:repeat(3,1fr)}
+  .ind{background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:12px 13px;position:relative;transition:border-color .15s}
+  .ind:hover{border-color:var(--blue)}
+  .ind-name{font-size:12px;color:var(--muted);margin-bottom:8px}
+  .ind-val{font-size:17px;font-weight:500;letter-spacing:.3px}
+  .ind-mom{font-size:11.5px;margin-top:3px}
+  .up{color:var(--teal)} .down{color:var(--red)} .flat{color:var(--muted)}
+  .ind-sig{position:absolute;top:11px;right:11px;width:9px;height:9px;border-radius:50%}
+  .ind-note{font-size:11px;color:var(--faint);margin-top:7px;padding-top:7px;border-top:1px dashed var(--border)}
+  .ind-dual{display:flex;gap:10px;margin-top:4px}
+  .ind-side{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:9px 10px}
+  .ind-side-head{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+  .ind-side-val{font-size:18px;font-weight:500;letter-spacing:.3px;margin-top:5px;font-variant-numeric:tabular-nums}
+  .ind-side-mom{font-size:11px;margin-top:2px}
+  .sd-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px 10px;margin-top:8px;font-size:11px}
+  .sd-item{display:flex;align-items:center;gap:5px;white-space:nowrap}
+  .sd-val{font-weight:500;font-variant-numeric:tabular-nums;min-width:28px;text-align:right}
+  .sd-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+  .legend{display:flex;gap:16px;margin-top:4px;font-size:11.5px;color:var(--muted)}
+  .legend span{display:flex;align-items:center;gap:5px}
+
+  /* 传导链 */
+  .chain{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .chain-node{flex:1;min-width:150px;background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:12px 14px;position:relative}
+  .chain-node .cn-name{font-size:13px;font-weight:500}
+  .chain-node .cn-status{font-size:11.5px;margin-top:3px}
+  .chain-arrow{color:var(--faint);font-size:16px;flex-shrink:0}
+  .st-g{color:var(--teal)} .st-y{color:var(--yellow)} .st-r{color:var(--red)}
+  .chain-note{color:var(--faint);font-size:11.5px;margin-top:10px;line-height:1.7}
+
+  /* 机会矩阵 */
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border)}
+  th{color:var(--muted);font-weight:500;font-size:12px}
+  td.num{font-variant-numeric:tabular-nums}
+  .badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11.5px;font-weight:500}
+  .b-blue{background:rgba(91,141,239,.16);color:#8fb1ff}
+  .b-yellow{background:rgba(230,179,30,.15);color:var(--yellow)}
+  .b-red{background:rgba(229,83,75,.16);color:#ff8a82}
+  /* 一二手价差 */
+  .gap-cols{display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start}
+  .gap-nums{display:flex;gap:10px;margin-bottom:4px}
+  .gap-num{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+  .gap-num .gn-label{font-size:11px;color:var(--muted)}
+  .gap-num .gn-val{font-size:16px;font-weight:500;margin-top:3px}
+  .gap-zone{position:relative;height:24px;border-radius:12px;overflow:hidden;margin-top:16px}
+  .gap-seg{position:absolute;top:0;height:100%}
+  .gap-mark{position:absolute;top:-5px;width:3px;height:34px;background:var(--text);border-radius:2px;transform:translateX(-1.5px)}
+  .gap-caption{display:flex;justify-content:space-between;font-size:10.5px;color:var(--faint);margin-top:6px}
+  .gap-rate{font-size:28px;font-weight:500}
+  .gap-status{font-size:12.5px;margin-top:4px;font-weight:500}
+  .gap-note{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.7}
+  /* 分总价段套数占比 */
+  .band-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+  .band-name{width:78px;font-size:11.5px;color:var(--muted);text-align:right;flex-shrink:0}
+  .band-track{flex:1;height:20px;background:var(--card2);border-radius:6px;overflow:hidden}
+  .band-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--blue),var(--teal))}
+  .band-pct{width:46px;text-align:right;font-size:12px;font-weight:500;font-variant-numeric:tabular-nums;flex-shrink:0}
+  .band-mom{width:56px;text-align:right;font-size:10.5px;flex-shrink:0}
+  footer{margin-top:22px;color:var(--faint);font-size:11.5px}
+  @media(max-width:820px){.verdict{grid-template-columns:1fr}.ind-grid{grid-template-columns:repeat(3,1fr)!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>基础市场监测升级 · 信号仪表盘</h1>
+      <div class="sub">杭八区 · 三层信号 · 跨市场传导链 · 圈层机会矩阵（广义/狭义） · 一二手价差</div>
+      <div class="sub" id="data-note" style="margin-top:2px">数据快照：示例数据（底表待填写，每月更新后重新发布）</div>
+    </div>
+        <div class="controls">
+      <span class="tag" id="src-tag">数据：快照</span>
+    </div>
+  </header>
+
+  <section class="card sec">
+    <div class="sec-title"><b>综合研判</b> · 市场温度</div>
+    <div class="verdict">
+      <div class="gauge">
+        <div class="gauge-num" id="v-score">—</div>
+        <div>
+          <div class="gauge-label" id="v-temp">—</div>
+          <div class="bar"><div class="bar-fill" id="v-bar"></div><div class="bar-mark" id="v-mark"></div></div>
+        </div>
+      </div>
+      <div class="verdict-main">
+        <div class="headline" id="v-headline">—</div>
+        <div class="desc" id="v-desc">—</div>
+        <div class="layer-sum" id="v-layers"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card sec">
+    <div class="sec-title"><b>三层信号灯</b> · 异动即预警，领先 1–3 月</div>
+    <div id="layers"></div>
+    <div class="legend">
+      <span><i class="dot g"></i>向好</span>
+      <span><i class="dot y"></i>观察</span>
+      <span><i class="dot r"></i>预警</span>
+      <span style="color:var(--faint)">· 悬浮指标卡查看信号说明</span>
+    </div>
+  </section>
+
+  <section class="card sec">
+    <div class="sec-title"><b>跨市场传导链</b> · 土地 → 二手 → 新房 → 客户</div>
+    <div class="chain" id="chain"></div>
+    <div class="chain-note">结论界定：四节点固定顺序构成跨市场传导叙事；每节点结论 = [节点名, 状态文案, 信号灯]。当前 Demo 为手写演示结论（呈现「观察期·黄」状态）。落地时节点应由对应层级指标自动推导：土地←土地出让溢价；二手←挂牌降价占比+带看量；新房←网签+认购；客户←来访+线上咨询热度。</div>
+  </section>
+
+  <div class="side-by-side">
+  <section class="card sec">
+    <div class="sec-title"><b>圈层机会矩阵</b> · 广义 / 狭义库存与去化周期（万方口径）</div>
+    <table>
+      <thead><tr><th>圈层</th><th>广义库存（万方）</th><th>广义去化（月）</th><th>狭义库存（万方）</th><th>狭义去化（月）</th><th>判定</th></tr></thead>
+      <tbody id="matrix"></tbody>
+    </table>
+  </section>
+
+  <section class="card sec">
+    <div class="sec-title"><b>新房成交结构</b> · 分总价段套数占比（月度）</div>
+    <div id="priceband"></div>
+  </section>
+  </div>
+
+  <section class="card sec">
+    <div class="sec-title"><b>一二手价差联动</b> · 限价放开后的「定价锚」</div>
+    <div id="pricegap"></div>
+  </section>
+
+  <footer>本 Demo 用于评判「框架逻辑 / 信号设计 / 交互」，全部数值为演示用途。落地时接入：同策（新房）、袋鼠汇网签+门店口径（二手）、贝壳带看与挂牌调价（先行）、土地出让与规划公示（供应）。</footer>
+</div>
+<script>
+// ===== 数据驱动层 =====
+// 设计原则：Excel 中的「环比/信号/占比/判定」多为公式或 AI 回填，浏览器端 SheetJS 取不到缓存值；
+// 因此看板只读取老沐手工填写的【数值 / 成交套数】原始列，占比、环比、信号、判定全部由本脚本实时重算。
+const EXCEL_NAME = "杭州基础市场监测指标台账.xlsx";
+const MONTHS = ["2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07","2026-08","2026-09","2026-10","2026-11","2026-12"];
+
+// —— 研判叙事（定性常量，不随填入数值变化，属初号机月度研判框架）——
+const NARRATIVE = {
+  verdict:{ score:58, temp:"回暖初期 · 谨慎观察", headline:"先行信号转暖，同步尚未确认，处于拐点观察期",
+    desc:"带看量连续回升、挂牌降价占比收窄，但来访与网签仍未同步放量。建议：维持现行假设，等待同步层确认后再上调。" },
+  chain:[["土地","预期转强","st-y"],["二手","挂牌收窄","st-g"],["新房","待确认","st-y"],["客户","观望减弱","st-y"]],
+  priceBandNote:"主力成交集中于 300–1000 万刚需刚改段，其中 400–800 万为绝对主力；1500 万+ 高改与顶豪合计约 13.5%，长尾分散。环比看 600 万+ 段普遍微升、300 万以下持续收缩，改善需求韧性显现、刚需承压。（占比与环比随 Excel 套数自动计算）",
+  breakdown:[["<90㎡",0.65,"g"],["90–110㎡",0.72,"g"],["110–120㎡",0.78,"g"],["120–130㎡",0.88,"y"],["130–140㎡",0.95,"y"],["140–160㎡",1.05,"y"],["160–180㎡",1.12,"y"],["180–200㎡",1.18,"y"],["200–240㎡",1.35,"r"],["240–300㎡",1.62,"r"],["300㎡+",2.10,"r"]]
+};
+
+// —— 演示兜底数据（Excel 无可读月份时使用，保证页面始终可渲染）——
+const FALLBACK_DATA = { "杭八区": {
+  verdict:{score:58,temp:"回暖初期 · 谨慎观察",headline:"先行信号转暖，同步尚未确认，处于拐点观察期",
+    desc:"带看量连续回升、挂牌降价占比收窄，但来访与网签仍未同步放量。建议：维持现行量价假设，等待同步层确认后再上调。",
+    layers:[["先行","y","转暖"],["同步","y","待确认"],["滞后","r","库存偏高"]]},
+  leading:[
+    {n:"二手带看量",v:"+12%",m:"环比+12%",d:"up",s:"g",note:"连续3周回升，领先网签约2周"},
+    {n:"挂牌降价占比",v:"34%",m:"环比-6pct",d:"down",s:"g",note:"降价盘占比收窄，议价空间缩小"},
+    {n:"线上咨询热度",v:"+8%",m:"环比+8%",d:"up",s:"g",note:"搜索/咨询量温和回升"},
+    {n:"土地出让溢价",v:"9%",m:"环比+3pct",d:"up",s:"g",note:"核心区地块溢价回升，预期转强"}
+  ],
+  sync:[
+    {n:"典型续销项目来访",v:"102组/月",m:"环比+4%",d:"up",s:"y",note:"小幅回升，未形成趋势"},
+    {n:"典型续销项目认购",v:"86套",m:"环比+6%",d:"up",s:"y",note:"认购领先网签2-4周"},
+    {n:"新房网签成交套数",v:"1,120套",m:"环比+2%",d:"up",s:"y",note:"官方口径，略有滞后"},
+    {n:"新房成交均价",v:"3.62万",m:"环比-1%",d:"down",s:"y",note:"结构性微降"},
+    {n:"二手成交套数",v:"980套",m:"环比+3%",d:"up",s:"y",note:"二手成交平稳"},
+    {n:"二手成交均价",v:"3.50万",m:"环比-1%",d:"down",s:"y",note:"议价空间约3%"}
+  ],
+  lag:[
+    {n:"去化周期",v:"17.6月",m:"环比-0.4月",d:"down",s:"r",
+     note:"整体仍高于24月警戒线下方，中性偏紧；狭义（已取证未售）压力低于广义，但核心区外持续走高。",
+     sub:{n:"狭义",v:"13.5月",m:"环比+0.2月",d:"up",s:"y"}},
+    {n:"价格指数",v:"98.4",m:"环比-0.6%",d:"down",s:"r",note:"同比仍下行，跌幅收窄"},
+    {n:"分面积段供求比",v:"0.95",m:"整体均衡，刚需偏紧",d:"down",s:"y",
+      note:"刚需段供不应求，改善段平衡，大户型过剩（↓见分档明细）",
+      breakdown:[
+        ["<90㎡",0.65,"g"],["90–110㎡",0.72,"g"],["110–120㎡",0.78,"g"],["120–130㎡",0.88,"y"],["130–140㎡",0.95,"y"],
+        ["140–160㎡",1.05,"y"],["160–180㎡",1.12,"y"],["180–200㎡",1.18,"y"],["200–240㎡",1.35,"r"],["240–300㎡",1.62,"r"],["300㎡+",2.10,"r"]
+      ]}
+  ],
+  chain:[["土地","预期转强","st-y"],["二手","挂牌收窄","st-g"],["新房","待确认","st-y"],["客户","观望减弱","st-y"]],
+  priceBand:{update:"2026-08",unit:"套数占比",
+    rows:[
+      ["≤300万",5,-1.2,"down"],["300–400万",10,-0.6,"down"],["400–600万",20,0.2,"flat"],
+      ["600–800万",18,0.8,"up"],["800–1000万",14,0.6,"up"],["1000–1200万",9,0.4,"up"],
+      ["1200–1500万",10,0.1,"flat"],["1500–1800万",6,0.3,"up"],["1800–2000万",3,-0.1,"flat"],
+      ["2000–2500万",2.5,-0.4,"down"],["2500–3000万",1.2,-0.2,"down"],["3000万以上",1.3,0.0,"flat"]
+    ],
+    note:"主力成交集中于 300–1000 万刚需刚改段（占比 62%），其中 400–800 万为绝对主力（38%）；1500 万+ 高改与顶豪合计约 13.5%，长尾分散。环比看 600 万+ 段普遍微升、300 万以下持续收缩，改善需求韧性显现、刚需承压。"}
+} };
+const FALLBACK_CIRCLES = [
+  ["杭八区",420,31.6,180,13.5,"r","风险 · 整体去化超24月"],
+  ["核心",45,14.1,22,6.9,"y","均衡 · 供应稀缺"],
+  ["次核",90,20.0,48,10.7,"y","均衡 · 改善主力"],
+  ["近郊",150,39.5,95,25.0,"r","风险 · 库存积压"],
+  ["远郊",135,75.0,110,61.1,"r","风险 · 严重过剩"]
+];
+
+// —— 指标展示格式化与信号规则 ——
+const NOTES = {
+  "二手带看量":"连续回升，领先网签约2周","挂牌降价占比":"降价盘占比收窄，议价空间缩小","线上咨询热度":"搜索/咨询量温和回升","土地出让溢价":"核心区地块溢价回升，预期转强",
+  "典型续销项目来访":"小幅回升，未形成趋势","典型续销项目认购":"认购领先网签2-4周","新房网签成交套数":"官方口径，略有滞后","新房成交均价":"结构性微降","二手成交套数":"二手成交平稳","二手成交均价":"议价空间约3%",
+  "广义库存去化周期":"广义偏高；狭义（已取证未售）压力低于广义，但核心区外持续走高。","价格指数":"同比仍下行，跌幅收窄","分面积段供求比":"刚需段供不应求，改善段平衡，大户型过剩"
+};
+const FMT = {
+  "二手带看量":v=>v==null?"—":Math.round(v).toLocaleString()+"组","挂牌降价占比":v=>v==null?"—":v+"%","线上咨询热度":v=>v==null?"—":v,
+  "土地出让溢价":v=>v==null?"—":v+"%","典型续销项目来访":v=>v==null?"—":Math.round(v)+"组","典型续销项目认购":v=>v==null?"—":Math.round(v)+"套",
+  "新房网签成交套数":v=>v==null?"—":Math.round(v).toLocaleString()+"套","新房成交均价":v=>v==null?"—":(v/10000).toFixed(2)+"万/㎡","二手成交套数":v=>v==null?"—":Math.round(v).toLocaleString()+"套",
+  "二手成交均价":v=>v==null?"—":(v/10000).toFixed(2)+"万/㎡","广义库存去化周期":v=>v==null?"—":v+"月","价格指数":v=>v==null?"—":v,"分面积段供求比":v=>v==null?"—":v
+};
+const SIG_RULE = {
+  "二手带看量":(v,m)=>m>0?"g":m<0?"r":"y","挂牌降价占比":(v,m)=>m<0?"g":m>0?"r":"y","线上咨询热度":(v,m)=>m>0?"g":"y",
+  "土地出让溢价":(v,m)=>m>0?"g":"y","典型续销项目来访":(v,m)=>m>0?"g":m<0?"r":"y","典型续销项目认购":(v,m)=>m>0?"g":m<0?"r":"y",
+  "新房网签成交套数":(v,m)=>m>0?"g":m<0?"r":"y","新房成交均价":()=>"y","二手成交套数":(v,m)=>m>0?"g":"y","二手成交均价":()=>"y",
+  "广义库存去化周期":v=>v<=10?"g":v<=24?"y":"r","价格指数":(v,m)=>m<0?"r":"g","分面积段供求比":v=>v<0.8?"g":v<=1.2?"y":"r"
+};
+function num(x){ if(x===null||x===undefined||x==="") return NaN; if(typeof x==="number") return x; const n=parseFloat(String(x).replace(/[,%\s]/g,"")); return isNaN(n)?NaN:n; }
+function sigNorm(s){ if(s===null||s===undefined||s==="") return ""; const t=String(s).trim().toLowerCase();
+  if(["g","绿","蓝海","blue"].includes(t)) return "g"; if(["y","黄","均衡","yellow"].includes(t)) return "y"; if(["r","红","风险","red"].includes(t)) return "r"; return ""; }
+function dirOf(m){ if(isNaN(m)||m===0) return "flat"; return m>0?"up":"down"; }
+function momText(m){ if(isNaN(m)) return "—"; const v=m*100; return "环比"+(v>=0?"+":"")+v.toFixed(1)+"%"; }
+function pctChange(c,p){ if(isNaN(c)||isNaN(p)||p===0) return NaN; return (c-p)/p; }
+function fmt(name,v){ const f=FMT[name]; return f?f(v):(v==null?"—":String(v)); }
+function deriveSig(name,v,m){ const f=SIG_RULE[name]; return f?f(v,m):"y"; }
+
+function parseWorkbook(wb){
+  const T = XLSX.utils.sheet_to_json(wb.Sheets["监测指标台账"], {header:1, defval:""});
+  const FIRST_M = 6; // G 列起，每月 3 列 [数值/环比/信号]
+  let latest = -1;
+  for(let m=MONTHS.length-1;m>=0;m--){
+    const vc = FIRST_M + m*3; let has=false;
+    for(let r=4;r<=16;r++){ const c=T[r]&&T[r][vc]; if(c!==""&&c!==null&&c!==undefined){ has=true; break; } }
+    if(has){ latest=m; break; }
+  }
+  if(latest<0) return null; // 无可读月份 → 调用方回退演示数据
+  const prev = latest>0 ? latest-1 : -1;
+  const mVal = m => FIRST_M + m*3;
+  const sigCol = m => FIRST_M + m*3 + 2;
+  const g = (r,c)=>{ const rr=T[r]; return rr?rr[c]:""; };
+
+  function getInd(name,row){
+    const v = num(g(row, mVal(latest)));
+    const vP = prev>=0 ? num(g(row, mVal(prev))) : NaN;
+    const mom = pctChange(v, vP);
+    const sc = sigNorm(g(row, sigCol(latest)));
+    const sig = sc || deriveSig(name, v, mom);
+    return { n:name, v:fmt(name,v), m:momText(mom), d:dirOf(mom), s:sig, note:NOTES[name]||"" };
+  }
+  const leading = ["二手带看量","挂牌降价占比","线上咨询热度","土地出让溢价"].map((nm,i)=>getInd(nm,4+i));
+  const sync = ["典型续销项目来访","典型续销项目认购","新房网签成交套数","新房成交均价","二手成交套数","二手成交均价"].map((nm,i)=>getInd(nm,8+i));
+
+  // 圈层机会矩阵
+  const C = XLSX.utils.sheet_to_json(wb.Sheets["圈层机会矩阵"], {header:1, defval:""});
+  const FIRST_CM = 2; const cmB = m => FIRST_CM + m*5;
+  const cg = (r,c)=>{ const rr=C[r]; return rr?rr[c]:""; };
+  const sPer = num(cg(4, cmB(latest)+3)); const sPerP = prev>=0?num(cg(4, cmB(prev)+3)):NaN;
+  const sMom = pctChange(sPer, sPerP);
+  const sSig = sigNorm(cg(4, cmB(latest)+4)) || (sPer<=10?"g":sPer<=24?"y":"r");
+
+  const lag = [
+    getInd("广义库存去化周期",14),
+    getInd("价格指数",15),
+    (function(){ const it=getInd("分面积段供求比",16); it.breakdown=NARRATIVE.breakdown; return it; })()
+  ];
+  lag[0].sub = { n:"狭义", v:fmt("广义库存去化周期",sPer), m:momText(sMom), d:dirOf(sMom), s:sSig };
+
+  const circleNames = ["杭八区","核心","次核","近郊","远郊"];
+  const circles = circleNames.map((nm,i)=>{
+    const r=4+i;
+    const gInv=num(cg(r,cmB(latest))), gPer=num(cg(r,cmB(latest)+1)), sInv=num(cg(r,cmB(latest)+2)), sPer=num(cg(r,cmB(latest)+3));
+    const b = sigNorm(cg(r,cmB(latest)+4)) || (gPer<=10?"g":gPer<=24?"y":"r");
+    const label = (b==="g"?"蓝海":b==="y"?"均衡":"风险")+" · 去化"+gPer+"月";
+    return [nm,gInv,gPer,sInv,sPer,b,label];
+  });
+
+  // 分总价段成交结构（老沐填套数，占比/环比重算）
+  const B = XLSX.utils.sheet_to_json(wb.Sheets["分总价段成交结构"], {header:1, defval:""});
+  const FIRST_BM = 2; const bmB = m => FIRST_BM + m*3;
+  const bg = (r,c)=>{ const rr=B[r]; return rr?rr[c]:""; };
+  const bandNames=[]; for(let r=4;r<=15;r++) bandNames.push(bg(r,0));
+  let totCur=0; const cntCur=[]; for(let r=4;r<=15;r++){ const c=num(bg(r,bmB(latest))); cntCur.push(c); if(!isNaN(c)) totCur+=c; }
+  let totPrev=0; const cntPrev=[]; if(prev>=0){ for(let r=4;r<=15;r++){ const c=num(bg(r,bmB(prev))); cntPrev.push(c); if(!isNaN(c)) totPrev+=c; } }
+  const pbRows=[];
+  for(let i=0;i<12;i++){
+    const name = bandNames[i] || ("档"+(i+1));
+    const c = cntCur[i]; const curPct = (totCur>0 && !isNaN(c)) ? c/totCur : 0;
+    let mom = NaN;
+    if(prev>=0 && totPrev>0){ const p=cntPrev[i]; const prevPct=(!isNaN(p))?p/totPrev:0; mom=pctChange(curPct, prevPct); }
+    pbRows.push([name, +(curPct*100).toFixed(1), isNaN(mom)?0:+(mom*100).toFixed(1), dirOf(mom)]);
+  }
+
+  function layerSig(arr){ const order={g:1,y:2,r:3}; let worst="g"; arr.forEach(it=>{ if(order[it.s]>order[worst]) worst=it.s; }); return worst; }
+  function layerText(s){ return s==="g"?"转暖":s==="r"?"风险":"待确认"; }
+  const vLayers = [["先行",layerSig(leading),layerText(layerSig(leading))],["同步",layerSig(sync),layerText(layerSig(sync))],["滞后",layerSig(lag),layerText(layerSig(lag))]];
+
+  const inner = {
+    verdict: Object.assign({}, NARRATIVE.verdict, {layers:vLayers}),
+    leading, sync, lag,
+    chain: NARRATIVE.chain,
+    priceBand: { update: MONTHS[latest], unit:"套数占比", rows: pbRows, note: NARRATIVE.priceBandNote }
+  };
+  const result = { "杭八区": inner };
+  result.meta = { latest, month: MONTHS[latest] };
+  result.circles = circles;
+  return result;
+}
+
+const SIG_COLOR = {g:"var(--green)",y:"var(--yellow)",r:"var(--red)"};
+const LAYER_META = [
+  {key:"leading",name:"先行指标",time:"领先 1–3 月",cls:"lead",grid:"ind-grid"},
+  {key:"sync",name:"同步指标",time:"当月",cls:"",grid:"ind-grid sync"},
+  {key:"lag",name:"滞后指标",time:"滞后 1–2 月",cls:"",grid:"ind-grid lag"}
+];
+const ARROW = {up:"▲",down:"▼",flat:"—"};
+const BADGE = {g:["b-blue","蓝海"],y:["b-yellow","均衡"],r:["b-red","风险"]};
+
+const EMBEDDED_DATA = {"杭八区":{"verdict":{"score":58,"temp":"回暖初期 · 谨慎观察","headline":"先行信号转暖，同步尚未确认，处于拐点观察期","desc":"带看量连续回升、挂牌降价占比收窄，但来访与网签仍未同步放量。建议：维持现行量价假设，等待同步层确认后再上调。","layers":[["先行","y","转暖"],["同步","y","待确认"],["滞后","r","库存偏高"]]},"leading":[{"n":"二手带看量","v":"+12%","m":"环比+12%","d":"up","s":"g","note":"连续3周回升，领先网签约2周"},{"n":"挂牌降价占比","v":"34%","m":"环比-6pct","d":"down","s":"g","note":"降价盘占比收窄，议价空间缩小"},{"n":"线上咨询热度","v":"+8%","m":"环比+8%","d":"up","s":"g","note":"搜索/咨询量温和回升"},{"n":"土地出让溢价","v":"9%","m":"环比+3pct","d":"up","s":"g","note":"核心区地块溢价回升，预期转强"}],"sync":[{"n":"典型续销项目来访","v":"102组/月","m":"环比+4%","d":"up","s":"y","note":"小幅回升，未形成趋势"},{"n":"典型续销项目认购","v":"86套","m":"环比+6%","d":"up","s":"y","note":"认购领先网签2-4周"},{"n":"新房网签成交套数","v":"1,120套","m":"环比+2%","d":"up","s":"y","note":"官方口径，略有滞后"},{"n":"新房成交均价","v":"3.62万","m":"环比-1%","d":"down","s":"y","note":"结构性微降"},{"n":"二手成交套数","v":"980套","m":"环比+3%","d":"up","s":"y","note":"二手成交平稳"},{"n":"二手成交均价","v":"3.50万","m":"环比-1%","d":"down","s":"y","note":"议价空间约3%"}],"lag":[{"n":"去化周期","v":"17.6月","m":"环比-0.4月","d":"down","s":"r","note":"整体仍高于24月警戒线下方，中性偏紧；狭义（已取证未售）压力低于广义，但核心区外持续走高。","sub":{"n":"狭义","v":"13.5月","m":"环比+0.2月","d":"up","s":"y"}},{"n":"价格指数","v":"98.4","m":"环比-0.6%","d":"down","s":"r","note":"同比仍下行，跌幅收窄"},{"n":"分面积段供求比","v":"0.95","m":"整体均衡，刚需偏紧","d":"down","s":"y","note":"刚需段供不应求，改善段平衡，大户型过剩（↓见分档明细）","breakdown":[["<90㎡",0.65,"g"],["90–110㎡",0.72,"g"],["110–120㎡",0.78,"g"],["120–130㎡",0.88,"y"],["130–140㎡",0.95,"y"],["140–160㎡",1.05,"y"],["160–180㎡",1.12,"y"],["180–200㎡",1.18,"y"],["200–240㎡",1.35,"r"],["240–300㎡",1.62,"r"],["300㎡+",2.1,"r"]]}],"chain":[["土地","预期转强","st-y"],["二手","挂牌收窄","st-g"],["新房","待确认","st-y"],["客户","观望减弱","st-y"]],"priceBand":{"update":"2026-08","unit":"套数占比","rows":[["≤300万",5,-1.2,"down"],["300–400万",10,-0.6,"down"],["400–600万",20,0.2,"flat"],["600–800万",18,0.8,"up"],["800–1000万",14,0.6,"up"],["1000–1200万",9,0.4,"up"],["1200–1500万",10,0.1,"flat"],["1500–1800万",6,0.3,"up"],["1800–2000万",3,-0.1,"flat"],["2000–2500万",2.5,-0.4,"down"],["2500–3000万",1.2,-0.2,"down"],["3000万以上",1.3,0,"flat"]],"note":"主力成交集中于 300–1000 万刚需刚改段（占比 62%），其中 400–800 万为绝对主力（38%）；1500 万+ 高改与顶豪合计约 13.5%，长尾分散。环比看 600 万+ 段普遍微升、300 万以下持续收缩，改善需求韧性显现、刚需承压。"}}};
+  const EMBEDDED_CIRCLES = [["杭八区",420,31.6,180,13.5,"r","风险 · 整体去化超24月"],["核心",45,14.1,22,6.9,"y","均衡 · 供应稀缺"],["次核",90,20,48,10.7,"y","均衡 · 改善主力"],["近郊",150,39.5,95,25,"r","风险 · 库存积压"],["远郊",135,75,110,61.1,"r","风险 · 严重过剩"]];
+  let DATA = EMBEDDED_DATA;
+  let CIRCLES = EMBEDDED_CIRCLES;
+
+function render(){
+  const k = "杭八区";
+  const d = DATA[k];
+  const v = d.verdict;
+
+  document.getElementById("v-score").textContent = v.score;
+  document.getElementById("v-temp").textContent = v.temp;
+  document.getElementById("v-headline").textContent = v.headline;
+  document.getElementById("v-desc").textContent = v.desc;
+  document.getElementById("v-bar").style.width = v.score + "%";
+  document.getElementById("v-mark").style.left = (v.score - 1) + "%";
+
+  const ls = document.getElementById("v-layers");
+  ls.innerHTML = v.layers.map(x=>
+    `<span class="layer-pill"><i class="dot ${x[1]==='g'?'g':x[1]==='r'?'r':'y'}"></i>${x[0]} · ${x[2]}</span>`
+  ).join("");
+
+  const layersEl = document.getElementById("layers");
+  layersEl.innerHTML = LAYER_META.map(meta=>{
+    const items = d[meta.key];
+    const cards = items.map(it=>{
+      const bd = it.breakdown ? `
+        <div class="sd-grid">${it.breakdown.map(b=>
+          `<div class="sd-item"><i class="sd-dot" style="background:${b[2]==='g'?'var(--teal)':b[2]==='y'?'var(--yellow)':'var(--red)'}"></i><span>${b[0]}</span><span class="sd-val ${b[2]==='g'?'up':b[2]==='r'?'down':'flat'}">${b[1]}</span></div>`
+        ).join("")}</div>` : '';
+      const hasDual = !!it.sub;
+      const sigDot = hasDual ? '' : `<i class="ind-sig" style="background:${SIG_COLOR[it.s]}"></i>`;
+      const dualHtml = hasDual ? `
+        <div class="ind-dual">
+          <div class="ind-side">
+            <div class="ind-side-head"><i class="ind-sig" style="position:static;width:7px;height:7px;background:${SIG_COLOR[it.s]}"></i><span>广义</span></div>
+            <div class="ind-side-val">${it.v}</div>
+            <div class="ind-side-mom ${it.d}">${ARROW[it.d]} ${it.m}</div>
+          </div>
+          <div class="ind-side">
+            <div class="ind-side-head"><i class="ind-sig" style="position:static;width:7px;height:7px;background:${SIG_COLOR[it.sub.s]}"></i><span>${it.sub.n}</span></div>
+            <div class="ind-side-val">${it.sub.v}</div>
+            <div class="ind-side-mom ${it.sub.d}">${ARROW[it.sub.d]} ${it.sub.m}</div>
+          </div>
+        </div>` : '';
+      return `<div class="ind">
+        ${sigDot}
+        <div class="ind-name">${it.n}</div>
+        ${hasDual ? dualHtml : `<div class="ind-val">${it.v}</div><div class="ind-mom ${it.d}">${ARROW[it.d]} ${it.m}</div>`}
+        <div class="ind-note">${it.note}</div>${bd}
+      </div>`;
+    }).join("");
+    return `<div class="layer">
+      <div class="layer-head"><span class="layer-name">${meta.name}</span><span class="layer-time ${meta.cls}">${meta.time}</span></div>
+      <div class="${meta.grid}">${cards}</div>
+    </div>`;
+  }).join("");
+
+  const chainEl = document.getElementById("chain");
+  chainEl.innerHTML = d.chain.map((c,i)=>{
+    const arr = i < d.chain.length-1 ? '<span class="chain-arrow">→</span>' : '';
+    return `<div class="chain-node">
+      <div class="cn-name">${c[0]}</div>
+      <div class="cn-status ${c[2]}">${c[1]}</div>
+    </div>${arr}`;
+  }).join("");
+
+  const matrixEl = document.getElementById("matrix");
+  matrixEl.innerHTML = CIRCLES.map(r=>{
+    const [c,gInv,gPer,sInv,sPer,b,label] = r;
+    const cls = b==='g'?'b-blue':b==='y'?'b-yellow':'b-red';
+    const tag = b==='g'?'蓝海':b==='y'?'均衡':'风险';
+    return `<tr>
+      <td>${c}</td><td class="num">${gInv}</td><td class="num">${gPer}</td>
+      <td class="num">${sInv}</td><td class="num">${sPer}</td>
+      <td><span class="badge ${cls}">${tag}</span><span style="color:var(--muted);margin-left:8px">${label}</span></td>
+    </tr>`;
+  }).join("");
+
+  const gapEl = document.getElementById("pricegap");
+  const np = d.sync.find(x=>x.n==="新房成交均价");
+  const sp = d.sync.find(x=>x.n==="二手成交均价");
+  const newAvg = np ? parseFloat(String(np.v).replace(/[^\d.]/g,"")) : 0;
+  const secAvg = sp ? parseFloat(String(sp.v).replace(/[^\d.]/g,"")) : 0;
+  const gapPct = secAvg ? (newAvg - secAvg)/secAvg*100 : 0;
+  const gapRate = (gapPct>=0?"+":"") + gapPct.toFixed(1) + "%";
+  const gsColor = gapPct >= 2 ? "var(--teal)" : (gapPct <= -2 ? "var(--red)" : "var(--yellow)");
+  const gapStatus = gapPct >= 2 ? "新房溢价" : (gapPct <= -2 ? "二手倒挂" : "基本平价");
+  const pos = (gapPct + 10) / 25 * 100;
+  const gapNote = "限价放开后倒挂消失，价差收窄至个位数，打新红利退坡，二手分流压力上升。价差率 = (新房成交均价 − 二手成交均价) ÷ 二手成交均价，由同步指标两行实时计算。";
+  gapEl.innerHTML = `
+    <div class="gap-cols">
+      <div>
+        <div class="gap-nums">
+          <div class="gap-num"><div class="gn-label">新房成交均价</div><div class="gn-val">${np?np.v:"—"}</div></div>
+          <div class="gap-num"><div class="gn-label">二手成交均价</div><div class="gn-val">${sp?sp.v:"—"}</div></div>
+        </div>
+        <div class="gap-zone">
+          <div class="gap-seg" style="left:0;width:40%;background:rgba(229,83,75,.22)"></div>
+          <div class="gap-seg" style="left:40%;width:8%;background:rgba(230,179,30,.22)"></div>
+          <div class="gap-seg" style="left:48%;width:52%;background:rgba(48,180,110,.22)"></div>
+          <div class="gap-mark" style="left:${pos}%"></div>
+        </div>
+        <div class="gap-caption"><span>-10% 倒挂</span><span>平价</span><span>+15% 溢价</span></div>
+      </div>
+      <div>
+        <div class="gap-rate" style="color:${gsColor}">${gapRate}</div>
+        <div class="gap-status" style="color:${gsColor}">${gapStatus}</div>
+        <div class="gap-note">${gapNote}</div>
+      </div>
+    </div>`;
+
+  const pbEl = document.getElementById("priceband");
+  const pb = d.priceBand;
+  pbEl.innerHTML = `
+    <div style="font-size:11px;color:var(--faint);margin-bottom:12px">口径：杭八区新房网签 · 按总价段套数占比 · 数据月份 ${pb.update}</div>
+    ${pb.rows.map(r=>{
+      const [name,pct,mom,d] = r;
+      const momTxt = (mom>=0?"+":"") + mom + "pct";
+      return `<div class="band-row">
+        <div class="band-name">${name}</div>
+        <div class="band-track"><div class="band-fill" style="width:${pct}%"></div></div>
+        <div class="band-pct">${pct}%</div>
+        <div class="band-mom ${d}">${ARROW[d]} ${momTxt}</div>
+      </div>`;
+    }).join("")}
+    <div class="ind-note" style="border-top:1px dashed var(--border);margin-top:12px;padding-top:10px">${pb.note}</div>`;
+}
+
+// ===== Excel 加载编排：变更 Excel → 看板自动同步 =====
+function setNote(txt){ const el=document.getElementById("data-note"); if(el) el.textContent=txt; }
+function setTag(txt){ const el=document.getElementById("src-tag"); if(el) el.textContent=txt; }
+
+render();
+</script>
+</body>
+</html>
