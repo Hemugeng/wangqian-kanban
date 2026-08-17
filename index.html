@@ -454,7 +454,7 @@
                 { label: '网签套数',     value: formatNumber(agg.totalSigned), color: 'green' },
                 { label: '整盘网签均价', priceLines: priceLines,             color: 'indigo' },
                 { label: '已推网签进度', value: formatPercent(avgConversion),  color: 'emerald' },
-                { label: '整盘广义存量', value: formatNumber(agg.totalStock), color: 'orange' },
+                { label: '整盘广义存量', value: colProject ? formatNumber(agg.totalStock) + ' 套' : '', color: 'orange' },
                 { label: '上周网签数',   value: formatNumber(lastWeekSigned),  color: 'purple', sub: wkNum ? 'W' + wkNum + ' ' + weekRange : '' }
             ];
 
