@@ -198,6 +198,19 @@
             font-style: italic;
         }
         
+        /* 合计行高亮：与各分面积段明细行区分 */
+        tr.summary-row > td {
+            background: rgba(59, 130, 246, 0.14) !important;
+        }
+        tr.summary-row > td.merged-cell {
+            background: rgba(59, 130, 246, 0.22) !important;
+            color: #93c5fd !important;
+            font-weight: 700 !important;
+        }
+        tr.summary-row > td:first-child {
+            border-left: 3px solid #3b82f6 !important;
+        }
+        
         .number-cell {
             text-align: right;
             font-variant-numeric: tabular-nums;
@@ -553,6 +566,11 @@
                 const badgeClass = conversionRate >= 0.7 ? 'badge-high' :
                                    conversionRate >= 0.4 ? 'badge-medium' : 'badge-low';
 
+                // 合计行特殊样式标记
+                const isSummaryRow = (row.业态 || '').includes('合计');
+                const summaryClass = isSummaryRow ? 'summary-row' : '';
+                const summaryStyle = isSummaryRow ? 'background:rgba(59,130,246,0.15); border-left:3px solid #3b82f6; ' : '';
+
                 const districtTd = districtSpan[i] > 0
                     ? `<td rowspan="${districtSpan[i]}" class="merged-cell" style="${freezeStyle(0, 'background:var(--bg-card); ')}">${row.板块 || ''}</td>`
                     : '';
@@ -560,11 +578,11 @@
                     ? `<td rowspan="${projectSpan[i]}" class="merged-cell" style="${freezeStyle(1, 'background:var(--bg-card); ')}">${projectFull}</td>`
                     : '';
                 const productTypeTd = productTypeSpan[i] > 0
-                    ? `<td rowspan="${productTypeSpan[i]}" class="merged-cell" style="${freezeStyle(2, 'background:var(--bg-card); ')}">${row.业态 || ''}</td>`
+                    ? `<td rowspan="${productTypeSpan[i]}" class="merged-cell summary-cell" style="${freezeStyle(2, 'background:var(--bg-card); ')}${isSummaryRow ? 'font-weight:600;color:#60a5fa;' : ''}">${row.业态 || ''}</td>`
                     : '';
 
                 html += `
-                    <tr>
+                    <tr class="${summaryClass}" style="${summaryStyle}">
                         ${districtTd}
                         ${projectTd}
                         ${productTypeTd}
