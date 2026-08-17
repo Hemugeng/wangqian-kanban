@@ -278,6 +278,13 @@
                     </svg>
                     刷新数据
                 </button>
+                <button onclick="toggleUpload()" class="refresh-btn">上传更新表</button>
+                <div id="uploadPanel" style="display:none; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+                    <input type="password" id="uploadPwd" placeholder="粘贴上传令牌(PAT)" class="th-filter" style="width:180px;">
+                    <input type="file" id="uploadFile" accept=".xlsx" class="th-filter">
+                    <button onclick="handleUpload()" class="refresh-btn">确认上传</button>
+                    <span id="uploadStatus" style="color:#94a3b8; font-size:12px;"></span>
+                </div>
             </div>
         </header>
 
@@ -341,10 +348,23 @@
             document.getElementById('updateTime').textContent = 
                 '数据更新时间：' + new Date().toLocaleString('zh-CN') + '（本地快照，正在尝试连接服务器...）';
 
-            // 2. 分享版：数据已内嵌于本文件，不依赖服务器（无需联网/无需后端）
-            document.getElementById('updateTime').textContent =
-                '数据快照：' + new Date().toLocaleString('zh-CN') + '（已内嵌，离线可用）';
-            showNotification('本文件为离线分享版，数据已内嵌');
+            // 2. 尝试加载外部 data.json（公网部署时为最新数据；file:// 离线打开会被 CORS 拦截，自动回落内联快照）
+            try {
+                const response = await fetch('data.json', { cache: 'no-store' });
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                const data = await response.json();
+                rawWeekly   = data.weekly   || [];
+                rawOverview = data.overview || [];
+                colDistrict = ''; colProject = '';
+                document.getElementById('updateTime').textContent =
+                    '数据更新时间：' + new Date().toLocaleString('zh-CN') + '（data.json）';
+                applyFilterAndRender();
+                showNotification('已加载最新 data.json');
+            } catch (error) {
+                document.getElementById('updateTime').textContent =
+                    '数据更新时间：' + new Date().toLocaleString('zh-CN') + '（本地快照，非最新）';
+                showNotification('外部数据加载失败，当前显示本地内嵌快照', 'error');
+            }
         }
 
 
@@ -670,6 +690,120 @@
             notification.textContent = message;
             document.body.appendChild(notification);
             setTimeout(() => notification.remove(), 3000);
+        }
+
+        // ===== 网页端上传更新（无后端：浏览器解析 Excel → 直写 GitHub data.json）=====
+        function toggleUpload() {
+            const p = document.getElementById('uploadPanel');
+            p.style.display = p.style.display === 'none' ? 'flex' : 'none';
+        }
+
+        // 懒加载 SheetJS（仅首次上传时下载，初始加载不占用带宽）
+        let _sheetJSPromise = null;
+        function ensureSheetJS() {
+            if (typeof XLSX !== 'undefined') return Promise.resolve();
+            if (!_sheetJSPromise) {
+                _sheetJSPromise = new Promise((resolve, reject) => {
+                    const s = document.createElement('script');
+                    s.src = 'sheetjs.mini.min.js';
+                    s.onload = () => resolve();
+                    s.onerror = () => reject(new Error('SheetJS 加载失败（请检查网络或 sheetjs.mini.min.js 是否存在）'));
+                    document.head.appendChild(s);
+                });
+            }
+            return _sheetJSPromise;
+        }
+
+        // 把数值型字符串转数字，空值转 null
+        function _toNum(v) {
+            if (v === null || v === undefined || v === '') return null;
+            if (typeof v === 'number') return v;
+            const s = String(v).trim();
+            if (s === '') return null;
+            if (!isNaN(Number(s))) return Number(s);
+            return s;
+        }
+
+        // 单个 sheet → 对象数组（按表头）；周列头空格归一化为换行（与既有数据风格一致）
+        function _sheetToObjects(ws) {
+            const raw = XLSX.utils.sheet_to_json(ws, { defval: null, raw: false });
+            const out = [];
+            for (const r of raw) {
+                const o = {};
+                let hasProject = false;
+                for (const k in r) {
+                    let key = String(k).trim();
+                    if (/^26年/.test(key) && key.includes('至')) key = key.replace(/\s+/g, '\n');
+                    const v = _toNum(r[k]);
+                    if (key === '项目' && v) hasProject = true;
+                    o[key] = v;
+                }
+                if (hasProject) out.push(o);   // 跳过无项目的空行
+            }
+            return out;
+        }
+
+        // 组装成 { overview, weekly }
+        function _buildDataFromWorkbook(wb) {
+            const nameOf = (kw) => wb.SheetNames.find(n => n.includes(kw)) || null;
+            const ovName = nameOf('整体进度') || wb.SheetNames[0];
+            const wkName = nameOf('周度') || wb.SheetNames[1] || wb.SheetNames[0];
+            return {
+                overview: _sheetToObjects(wb.Sheets[ovName]),
+                weekly:   _sheetToObjects(wb.Sheets[wkName])
+            };
+        }
+
+        // 调 GitHub Contents API 写回 data.json（PAT 仅存在于本次会话内存）
+        async function _uploadDataJson(data, token) {
+            const repo = 'Hemugeng/wangqian-kanban';
+            const path = 'data.json';
+            const api = `https://api.github.com/repos/${repo}/contents/${path}`;
+            const headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' };
+            let sha = null;
+            try {
+                const r = await fetch(api, { headers });
+                if (r.ok) sha = (await r.json()).sha;
+            } catch (_) { /* 首次无 sha 也可写 */ }
+            const content = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+            const body = { message: 'update data.json via web upload', content: content };
+            if (sha) body.sha = sha;
+            const res = await fetch(api, {
+                method: 'PUT',
+                headers: Object.assign({ 'Content-Type': 'application/json' }, headers),
+                body: JSON.stringify(body)
+            });
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.message || ('HTTP ' + res.status));
+            }
+            return true;
+        }
+
+        // 上传主流程
+        async function handleUpload() {
+            const pwd = (document.getElementById('uploadPwd').value || '').trim();
+            const file = document.getElementById('uploadFile').files[0];
+            const status = document.getElementById('uploadStatus');
+            if (!pwd) { showNotification('请先粘贴上传令牌(PAT)', 'error'); return; }
+            if (!file) { showNotification('请先选择 Excel 文件', 'error'); return; }
+            status.textContent = '解析中…';
+            try {
+                await ensureSheetJS();
+                const buf = await file.arrayBuffer();
+                const wb = XLSX.read(buf, { type: 'array' });
+                const data = _buildDataFromWorkbook(wb);
+                if (!data.overview.length || !data.weekly.length)
+                    throw new Error('模板无数据，请检查 sheet 名「整体进度」「周度」');
+                status.textContent = '上传中…';
+                await _uploadDataJson(data, pwd);
+                status.textContent = '成功 ✓';
+                showNotification('已上传并更新看板，稍后刷新即可见');
+                await refreshData();   // 重新拉取最新 data.json 渲染
+            } catch (e) {
+                status.textContent = '失败：' + e.message;
+                showNotification('上传失败：' + e.message, 'error');
+            }
         }
 
         // 初始加载
