@@ -454,7 +454,7 @@
                 { label: '网签套数',     value: formatNumber(agg.totalSigned), color: 'green' },
                 { label: '整盘网签均价', priceLines: priceLines,             color: 'indigo' },
                 { label: '已推网签进度', value: formatPercent(avgConversion),  color: 'emerald' },
-                { label: '整盘广义存量', value: formatNumber(totalBroadStock, 1) + ' 万方', color: 'orange' },
+                { label: '整盘广义存量', value: formatNumber(agg.totalStock), color: 'orange' },
                 { label: '上周网签数',   value: formatNumber(lastWeekSigned),  color: 'purple', sub: wkNum ? 'W' + wkNum + ' ' + weekRange : '' }
             ];
 
@@ -642,13 +642,13 @@
             let filteredWeekly = rawWeekly.slice();
             if (colDistrict) filteredWeekly = filteredWeekly.filter(d => d.板块 === colDistrict);
             if (colProject) filteredWeekly = filteredWeekly.filter(d => (d.项目 || '').split('\n')[0] === colProject);
-            weeklyData = filteredWeekly.filter(d => !((d.板块 || '').includes('未出规划')) && !((d.业态 || '').includes('叠排合计')));
+            weeklyData = filteredWeekly.filter(d => !((d.板块 || '').includes('未出规划')));
 
             // 总览卡片数据：按当前筛选条件联动过滤（板块/项目），与周度表保持一致；并去除无效行
             let filteredOverview = rawOverview.slice();
             if (colDistrict) filteredOverview = filteredOverview.filter(d => d.板块 === colDistrict);
             if (colProject) filteredOverview = filteredOverview.filter(d => (d.项目 || '').split('\n')[0] === colProject);
-            overviewData = filteredOverview.filter(d => !((d.板块 || '').includes('未出规划')) && !((d.业态 || '').includes('叠排合计')));
+            overviewData = filteredOverview.filter(d => !((d.板块 || '').includes('未出规划')));
 
             updateWeeklyTable();
             updateStats();
