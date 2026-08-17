@@ -366,14 +366,18 @@
 
             const avgConversion = agg.totalSupply > 0 ? agg.totalSigned / agg.totalSupply : 0;
 
-            // 上周网签数：自动识别最新周（结束日期最晚的周列）；单项目取该项目行，多项目/全部取"合计"行（避免重复）
+            // 上周网签数：自动识别"真实上一周"——取结束日期早于今天、且最接近今天（最近一个已结束完整周）的周列，
+            // 而非表格最后一列（避免指向未来空数据周如 W52）。单项目取该项目行，多项目/全部取"合计"行（避免重复）
             const weekKeys = weeklyData.length > 0
                 ? Object.keys(weeklyData[0]).filter(k => k.includes('周')) : [];
+            const _now = new Date();
+            const _today = _now.getFullYear() + '-' + String(_now.getMonth() + 1).padStart(2, '0') + '-' + String(_now.getDate()).padStart(2, '0');
             let latestWeek = '', latestDate = '';
             weekKeys.forEach(k => {
                 const m = k.match(/至(\d{4}-\d{2}-\d{2})/);
                 const d = m ? m[1] : '';
-                if (d && d > latestDate) { latestDate = d; latestWeek = k; }
+                // 仅计入已结束的周（结束日期 < 今天），取结束日期最晚者 = 最近一个完整周
+                if (d && d < _today && d > latestDate) { latestDate = d; latestWeek = k; }
             });
             const lastWeekRows = singleRows
                 ? singleRows
