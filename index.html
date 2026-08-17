@@ -493,7 +493,7 @@
             const tbody = document.getElementById('weeklyBody');
 
             // 冻结列配置：横向滚动时左侧关键列固定（类 Excel 冻结窗格）；固定宽度保证 sticky left 精确对齐
-            const FREEZE_W = [90, 150, 90, 80, 95, 95, 95, 105, 85];
+            const FREEZE_W = [150, 90, 80, 95, 95, 95, 105, 85];
             const FREEZE_LEFT = (() => { const a = [0]; for (let i = 1; i < FREEZE_W.length; i++) a.push(a[i - 1] + FREEZE_W[i - 1]); return a; })();
             const freezeStyle = (i, extra = '') =>
                 `position:sticky; left:${FREEZE_LEFT[i]}px; width:${FREEZE_W[i]}px; min-width:${FREEZE_W[i]}px; z-index:20; ${extra}`;
@@ -505,15 +505,14 @@
 
             let headerHtml = `
                 <tr>
-                    <th class="filter-th" style="${freezeStyle(0, 'top:0; z-index:30; white-space:nowrap;')}">板块<select id="weeklyDistrictFilter" class="th-filter"></select></th>
-                    <th class="filter-th" style="${freezeStyle(1, 'top:0; z-index:30; white-space:nowrap;')}">项目<select id="weeklyProjectFilter" class="th-filter"></select></th>
-                    <th style="${freezeStyle(2, 'top:0; z-index:30; white-space:nowrap;')}">业态</th>
-                    <th class="number-cell" style="${freezeStyle(3, 'top:0; z-index:30; ')}">面积段</th>
-                    <th class="number-cell" style="${freezeStyle(4, 'top:0; z-index:30; ')}">整盘套数</th>
-                    <th class="number-cell" style="${freezeStyle(5, 'top:0; z-index:30; ')}">供应套数</th>
-                    <th class="number-cell" style="${freezeStyle(6, 'top:0; z-index:30; ')}">整体网签</th>
-                    <th class="number-cell" style="${freezeStyle(7, 'top:0; z-index:30; ')}">网签单价</th>
-                    <th class="number-cell" style="${freezeStyle(8, 'top:0; z-index:30; ')}">已推网签进度</th>
+                    <th class="filter-th" style="${freezeStyle(0, 'top:0; z-index:30; white-space:nowrap;')}">项目<select id="weeklyProjectFilter" class="th-filter"></select></th>
+                    <th style="${freezeStyle(1, 'top:0; z-index:30; white-space:nowrap;')}">业态</th>
+                    <th class="number-cell" style="${freezeStyle(2, 'top:0; z-index:30; ')}">面积段</th>
+                    <th class="number-cell" style="${freezeStyle(3, 'top:0; z-index:30; ')}">整盘套数</th>
+                    <th class="number-cell" style="${freezeStyle(4, 'top:0; z-index:30; ')}">供应套数</th>
+                    <th class="number-cell" style="${freezeStyle(5, 'top:0; z-index:30; ')}">整体网签</th>
+                    <th class="number-cell" style="${freezeStyle(6, 'top:0; z-index:30; ')}">网签单价</th>
+                    <th class="number-cell" style="${freezeStyle(7, 'top:0; z-index:30; ')}">已推网签进度</th>
                     ${weekColumns.map(w => {
                         const m = w.match(/第(\d+)周/);
                         const wkNum = m ? m[1] : '';
@@ -542,19 +541,14 @@
                 }
             }
             // 第二遍：板块/项目/业态各自的 rowspan（此时 effectivePT 已完整，可安全向前引用）
-            const districtSpan = new Array(n).fill(0);
+
             const projectSpan = new Array(n).fill(0);
             const productTypeSpan = new Array(n).fill(0);
             for (let i = 0; i < n; i++) {
                 const row = weeklyData[i];
                 const projectKey = prevProjectKey(row);
                 const eff = effectivePT[i];
-                // 板块连续数
-                if (i === 0 || row.板块 !== weeklyData[i - 1].板块) {
-                    let span = 1;
-                    while (i + span < n && weeklyData[i + span].板块 === row.板块) span++;
-                    districtSpan[i] = span;
-                }
+
                 // 项目连续数
                 if (i === 0 || projectKey !== prevProjectKey(weeklyData[i - 1])) {
                     let span = 1;
@@ -586,27 +580,24 @@
                 const summaryClass = isSummaryRow ? 'summary-row' : '';
                 const summaryStyle = isSummaryRow ? 'background:rgba(59,130,246,0.15); border-left:3px solid #3b82f6; ' : '';
 
-                const districtTd = districtSpan[i] > 0
-                    ? `<td rowspan="${districtSpan[i]}" class="merged-cell" style="${freezeStyle(0, 'background:var(--bg-card); ')}">${row.板块 || ''}</td>`
-                    : '';
+
                 const projectTd = projectSpan[i] > 0
-                    ? `<td rowspan="${projectSpan[i]}" class="merged-cell" style="${freezeStyle(1, 'background:var(--bg-card); ')}">${projectFull}</td>`
+                    ? `<td rowspan="${projectSpan[i]}" class="merged-cell" style="${freezeStyle(0, 'background:var(--bg-card); ')}">${projectFull}</td>`
                     : '';
                 const productTypeTd = productTypeSpan[i] > 0
-                    ? `<td rowspan="${productTypeSpan[i]}" class="merged-cell summary-cell" style="${freezeStyle(2, 'background:var(--bg-card); ')}${isSummaryRow ? 'font-weight:600;color:#60a5fa;' : ''}">${row.业态 || ''}</td>`
+                    ? `<td rowspan="${productTypeSpan[i]}" class="merged-cell summary-cell" style="${freezeStyle(1, 'background:var(--bg-card); ')}${isSummaryRow ? 'font-weight:600;color:#60a5fa;' : ''}">${row.业态 || ''}</td>`
                     : '';
 
                 html += `
                     <tr class="${summaryClass}" style="${summaryStyle}">
-                        ${districtTd}
                         ${projectTd}
                         ${productTypeTd}
-                        <td class="number-cell" style="${freezeStyle(3, 'background:var(--bg-card); ')}">${formatNumber(row.面积段)}</td>
-                        <td class="number-cell" style="${freezeStyle(4, 'background:var(--bg-card); ')}">${formatNumber(row.整盘套数)}</td>
-                        <td class="number-cell" style="${freezeStyle(5, 'background:var(--bg-card); ')}">${formatNumber(row.供应套数)}</td>
-                        <td class="number-cell" style="${freezeStyle(6, 'background:var(--bg-card); ')}">${formatNumber(row.整体网签套数)}</td>
-                        <td class="number-cell" style="${freezeStyle(7, 'background:var(--bg-card); ')}">${formatNumber(row.网签均价)}</td>
-                        <td class="number-cell" style="${freezeStyle(8, 'background:var(--bg-card); ')}">
+                        <td class="number-cell" style="${freezeStyle(2, 'background:var(--bg-card); ')}">${formatNumber(row.面积段)}</td>
+                        <td class="number-cell" style="${freezeStyle(3, 'background:var(--bg-card); ')}">${formatNumber(row.整盘套数)}</td>
+                        <td class="number-cell" style="${freezeStyle(4, 'background:var(--bg-card); ')}">${formatNumber(row.供应套数)}</td>
+                        <td class="number-cell" style="${freezeStyle(5, 'background:var(--bg-card); ')}">${formatNumber(row.整体网签套数)}</td>
+                        <td class="number-cell" style="${freezeStyle(6, 'background:var(--bg-card); ')}">${formatNumber(row.网签均价)}</td>
+                        <td class="number-cell" style="${freezeStyle(7, 'background:var(--bg-card); ')}">
                             <span class="badge ${badgeClass}">${formatPercent(conversionRate)}</span>
                         </td>
                         ${weekColumns.map(w => {
@@ -657,16 +648,7 @@
 
         // 填充表头板块/项目筛选下拉（周度表）
         function populateColumnFilters() {
-            const districts = [...new Set(rawWeekly.filter(d => d.板块).map(d => d.板块))];
             const projects = [...new Set(rawWeekly.filter(d => d.项目).map(d => (d.项目 || '').split('\n')[0]))];
-            const fillDistrict = (id) => {
-                const sel = document.getElementById(id);
-                if (!sel) return null;
-                sel.innerHTML = '<option value="">全部板块</option>' + 
-                    districts.map(d => `<option value="${d}">${d}</option>`).join('');
-                sel.value = colDistrict || '';
-                return sel;
-            };
             const fillProject = (id) => {
                 const sel = document.getElementById(id);
                 if (!sel) return null;
@@ -675,9 +657,7 @@
                 sel.value = colProject || '';
                 return sel;
             };
-            const selWD = fillDistrict('weeklyDistrictFilter');
             const selWP = fillProject('weeklyProjectFilter');
-            if (selWD) selWD.onchange = () => { colDistrict = selWD.value; applyFilterAndRender(); };
             if (selWP) selWP.onchange = () => { colProject = selWP.value; applyFilterAndRender(); };
         }
 
