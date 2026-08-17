@@ -198,13 +198,13 @@
             font-style: italic;
         }
         
-        /* 合计行高亮：与各分面积段明细行区分 */
+        /* 合计行高亮：与各分面积段明细行区分（背景必须不透明，否则横向滚动时底层周度数据会穿透固定列） */
         tr.summary-row > td {
-            background: rgba(59, 130, 246, 0.14) !important;
+            background: #1e3a5f !important;
         }
         tr.summary-row > td.merged-cell {
-            background: rgba(59, 130, 246, 0.22) !important;
-            color: #93c5fd !important;
+            background: #2a4f80 !important;
+            color: #bfdbfe !important;
             font-weight: 700 !important;
         }
         tr.summary-row > td:first-child {
