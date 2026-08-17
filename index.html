@@ -545,7 +545,7 @@
             let html = '';
             weeklyData.forEach((row, i) => {
                 const projectFull = row.项目 || '';
-                const conversionRate = Number(row.入市部分去化率) || 0;
+                const conversionRate = Number(row.已推网签进度) || Number(row.入市部分去化率) || Number(row.入市部分网签率) || 0;
                 const badgeClass = conversionRate >= 0.7 ? 'badge-high' :
                                    conversionRate >= 0.4 ? 'badge-medium' : 'badge-low';
 
