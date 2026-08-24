@@ -244,6 +244,8 @@
         }
         /* 高亮列内：正数沿用正常列的绿色(.positive)；仅非正数(0/-)用深琥珀色保证浅底可读 */
         .week-cell.week-prev:not(.positive) { color: #7a4f01; }
+        /* 高亮列合计行：底色仍保持合计行深蓝(#1e3a5f)，文字改白色与正常列合计行一致；深琥珀在深蓝底上过度突出故转白 */
+        tr.summary-row > td.week-cell.week-prev:not(.positive) { color: #ffffff; }
         .week-header.week-prev {
             background: #ffe08a;
             color: #6b4400;
