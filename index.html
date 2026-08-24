@@ -847,6 +847,15 @@
                 const hasSigned = data.weekly.some(r => r.整体网签套数 != null && Number(r.整体网签套数) > 0);
                 if (!hasSigned)
                     throw new Error('「整体网签套数」累计字段为空：请先在 Excel 中"复制→粘贴为值"断开公式链接后再上传');
+                // 护栏①：周列键必须含"周"字（W17 等旧表头应被归一化为"26年第NN周"），否则周度表渲染会全空白
+                const _sample = data.weekly.find(r => r.项目) || data.weekly[0] || {};
+                const _wkKeys = Object.keys(_sample).filter(k => k.includes('周'));
+                if (_wkKeys.length === 0)
+                    throw new Error('未识别到任何周列：请确认周列表头为「W17」或「26年第17周」格式且含日期范围，或联系管理员');
+                // 护栏②：产物体积护栏（正常应 < 1MB；若逼近说明列未裁剪，拒绝以免写出 23MB 坏文件写坏线上 data.json）
+                const _payloadSize = JSON.stringify(data).length;
+                if (_payloadSize > 2 * 1024 * 1024)
+                    throw new Error('解析产物异常庞大（' + (_payloadSize / 1024 / 1024).toFixed(1) + 'MB），疑似列未裁剪，已拒绝上传');
                 status.textContent = '上传中…';
                 await _uploadDataJson(data, pwd);
                 status.textContent = '成功 ✓';
