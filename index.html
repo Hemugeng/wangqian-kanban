@@ -621,9 +621,12 @@
                             <span class="badge ${badgeClass}">${formatPercent(conversionRate)}</span>
                         </td>
                         ${weekColumns.map(w => {
-                            const val = Number(row[w]) || 0;
-                            const cellClass = val > 0 ? 'positive font-bold' : '';
-                            return `<td class="number-cell week-cell ${cellClass}">${val > 0 ? val : '-'}</td>`;
+                            const raw = row[w];
+                            const isNull = (raw === null || raw === undefined);
+                            const val = isNull ? 0 : Number(raw);
+                            const cellClass = (val > 0) ? 'positive font-bold' : '';
+                            const display = isNull ? '-' : (val > 0 ? val : '0');
+                            return `<td class="number-cell week-cell ${cellClass}">${display}</td>`;
                         }).join('')}
                     </tr>
                 `;
@@ -778,10 +781,48 @@
         // 组装成 { overview, weekly }
         // 新架构（0824 起）：单张「周度」表同时承载累计字段与周列，直接驱动看板。
         // overview 层由周度表累计字段派生（整体网签套数→网签套数；去化率按口径计算），渲染层零改动、版式不变。
+        // 合计行周列兜底：浏览器 SheetJS 读不到 =SUM 公式的缓存结果（公式串被 _toNum 当 null 丢弃），
+        // 导致合计行周列大量为 null → 渲染显示 '-'。此处用同表同项目「合计行上方连续明细块」按周求和重算，
+        // 与 Excel 的 =SUM(明细块) 范围一致；仅当该块内所有明细周列都为 null 时才保留 null（确无数据）。
+        function _recomputeSummaryWeekly(weekly) {
+            if (!weekly.length) return;
+            const weekKeys = Object.keys(weekly[0]).filter(k => k.includes('周'));
+            if (!weekKeys.length) return;
+            const projKey = (r) => (r.项目 || '').split('\n')[0];
+            const isSum = (r) => (r.业态 || '').includes('合计');
+            for (let i = 0; i < weekly.length; i++) {
+                const s = weekly[i];
+                if (!isSum(s)) continue;
+                const pj = projKey(s);
+                let group = [];
+                if ((s.业态 || '').trim() === '合计') {
+                    group = weekly.filter(d => d !== s && !isSum(d) && projKey(d) === pj);
+                } else {
+                    for (let j = i - 1; j >= 0; j--) {
+                        const d = weekly[j];
+                        if (projKey(d) !== pj) break;
+                        if (isSum(d)) break;
+                        group.push(d);
+                    }
+                }
+                for (const w of weekKeys) {
+                    // 复刻 Excel =SUM 语义：明细空单元格在求和时按 0 计，故合计行永远为数值（0 或正数），不出现 null→'-'
+                    let sum = 0;
+                    for (const d of group) {
+                        const v = d[w];
+                        const num = (v === null || v === undefined || isNaN(Number(v))) ? 0 : Number(v);
+                        sum += num;
+                    }
+                    s[w] = sum;
+                }
+            }
+        }
+
         function _buildDataFromWorkbook(wb) {
             const nameOf = (kw) => wb.SheetNames.find(n => n.includes(kw)) || null;
             const wkName = nameOf('周度') || wb.SheetNames[0];
             const weekly = _sheetToObjects(wb.Sheets[wkName]);
+            _recomputeSummaryWeekly(weekly);   // 合计行周列按明细块重算，避免公式缓存缺失导致显示 '-'
             // 若存在「整体进度」sheet 则优先用其（向后兼容旧双 sheet 模板）；否则由周度表派生 overview
             const ovName = nameOf('整体进度');
             let overview;
