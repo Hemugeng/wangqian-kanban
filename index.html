@@ -720,6 +720,9 @@
             if (typeof v === 'number') return v;
             const s = String(v).trim();
             if (s === '') return null;
+            // 公式（含跨工作簿引用 =[1]...!H3）：浏览器端 SheetJS 无法计算，按缺失处理
+            // （Excel 已算出的同表公式如 =SUM()/=H2/G2 会带缓存值，此处不会命中）
+            if (s.charAt(0) === '=') return null;
             // 兼容百分比文本（如 "94%"）→ 0.94：Excel 里习惯填 94%，上传时归一化为 0~1 小数
             if (/%$/.test(s)) {
                 const pct = parseFloat(s.replace('%', ''));
@@ -731,6 +734,19 @@
 
         // 单个 sheet → 对象数组（按表头）；周列头空格归一化为换行（与既有数据风格一致）
         function _sheetToObjects(ws) {
+            // 裁剪到首行有表头的实际列范围（0824 模板维度为 A1:XFD36，多出的上万空列会产生无意义空键并拖慢解析）
+            if (ws && ws['!ref']) {
+                try {
+                    const range = XLSX.utils.decode_range(ws['!ref']);
+                    let lastCol = range.s.c;
+                    for (let c = range.e.c; c >= range.s.c; c--) {
+                        const cell = ws[XLSX.utils.encode_cell({ r: range.s.r, c: c })];
+                        if (cell && cell.v != null && String(cell.v).trim() !== '') { lastCol = c; break; }
+                    }
+                    range.e.c = lastCol;
+                    ws['!ref'] = XLSX.utils.encode_range(range);
+                } catch (e) { /* 忽略，按原范围解析 */ }
+            }
             const raw = XLSX.utils.sheet_to_json(ws, { defval: null, raw: false });
             const out = [];
             for (const r of raw) {
@@ -749,14 +765,30 @@
         }
 
         // 组装成 { overview, weekly }
+        // 新架构（0824 起）：单张「周度」表同时承载累计字段与周列，直接驱动看板。
+        // overview 层由周度表累计字段派生（整体网签套数→网签套数；去化率按口径计算），渲染层零改动、版式不变。
         function _buildDataFromWorkbook(wb) {
             const nameOf = (kw) => wb.SheetNames.find(n => n.includes(kw)) || null;
-            const ovName = nameOf('整体进度') || wb.SheetNames[0];
-            const wkName = nameOf('周度') || wb.SheetNames[1] || wb.SheetNames[0];
-            return {
-                overview: _sheetToObjects(wb.Sheets[ovName]),
-                weekly:   _sheetToObjects(wb.Sheets[wkName])
-            };
+            const wkName = nameOf('周度') || wb.SheetNames[0];
+            const weekly = _sheetToObjects(wb.Sheets[wkName]);
+            // 若存在「整体进度」sheet 则优先用其（向后兼容旧双 sheet 模板）；否则由周度表派生 overview
+            const ovName = nameOf('整体进度');
+            let overview;
+            if (ovName && ovName !== wkName) {
+                overview = _sheetToObjects(wb.Sheets[ovName]);
+            } else {
+                overview = weekly.map(r => {
+                    const o = Object.assign({}, r);
+                    const signed = (r.整体网签套数 != null) ? r.整体网签套数 : r.网签套数;
+                    const total = r.整盘套数;
+                    o.网签套数 = signed;                                                                 // 累计网签套数
+                    o.已推去化率 = (r.已推网签进度 != null) ? r.已推网签进度 : null;
+                    o.整盘去化率 = (total && signed != null) ? (Number(signed) / Number(total)) : null;
+                    if (o.整盘广义存量万方 == null) o.整盘广义存量万方 = null;   // 仅历史快照用，卡片未渲染
+                    return o;
+                });
+            }
+            return { overview: overview, weekly: weekly };
         }
 
         // 调 GitHub Contents API 写回 data.json（PAT 仅存在于本次会话内存）
@@ -798,8 +830,12 @@
                 const buf = await file.arrayBuffer();
                 const wb = XLSX.read(buf, { type: 'array' });
                 const data = _buildDataFromWorkbook(wb);
-                if (!data.overview.length || !data.weekly.length)
-                    throw new Error('模板无数据，请检查 sheet 名「整体进度」「周度」');
+                if (!data.weekly.length)
+                    throw new Error('模板无数据，请确认含「周度」sheet');
+                // 防护：累计字段全为空（多为未"粘贴为值"的跨表公式）→ 拒绝上传，避免写坏线上 data.json
+                const hasSigned = data.weekly.some(r => r.整体网签套数 != null && Number(r.整体网签套数) > 0);
+                if (!hasSigned)
+                    throw new Error('「整体网签套数」累计字段为空：请先在 Excel 中"复制→粘贴为值"断开公式链接后再上传');
                 status.textContent = '上传中…';
                 await _uploadDataJson(data, pwd);
                 status.textContent = '成功 ✓';
