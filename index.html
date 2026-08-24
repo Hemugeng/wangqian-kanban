@@ -720,6 +720,11 @@
             if (typeof v === 'number') return v;
             const s = String(v).trim();
             if (s === '') return null;
+            // 兼容百分比文本（如 "94%"）→ 0.94：Excel 里习惯填 94%，上传时归一化为 0~1 小数
+            if (/%$/.test(s)) {
+                const pct = parseFloat(s.replace('%', ''));
+                if (!isNaN(pct)) return pct / 100;
+            }
             if (!isNaN(Number(s))) return Number(s);
             return s;
         }
