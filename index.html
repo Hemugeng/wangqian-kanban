@@ -240,10 +240,10 @@
         /* 前一周列高亮：突出上一周数据，便于查看最新环比 */
         .week-cell.week-prev {
             background: #fff3cd;
-            color: #7a4f01;
-            font-weight: 700;
             box-shadow: inset 3px 0 0 #f0a500, inset -3px 0 0 #f0a500;
         }
+        /* 高亮列内：正数沿用正常列的绿色(.positive)；仅非正数(0/-)用深琥珀色保证浅底可读 */
+        .week-cell.week-prev:not(.positive) { color: #7a4f01; }
         .week-header.week-prev {
             background: #ffe08a;
             color: #6b4400;
