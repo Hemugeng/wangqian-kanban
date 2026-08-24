@@ -754,7 +754,18 @@
                 let hasProject = false;
                 for (const k in r) {
                     let key = String(k).trim();
-                    if (/^26年/.test(key) && key.includes('至')) key = key.replace(/\s+/g, '\n');
+                    // 周列头归一化：兼容两种模板格式，统一输出既有的规范键 "26年第NN周\nYYYY-MM-DD至YYYY-MM-DD"
+                    //  旧: "26年第17周 2026-04-20至2026-04-26"（空格分隔）
+                    //  新(0824): "W17\n26-04-20至04-26"（W前缀 + 2位年 + 短日期）
+                    if (/^W\d/.test(key)) {
+                        const m = key.match(/^W(\d+)\s*(\d{2})-(\d{2})-(\d{2})至(\d{2})-(\d{2})/);
+                        if (m) {
+                            const y = '20' + m[2];   // 26 → 2026
+                            key = `26年第${m[1]}周\n${y}-${m[3]}-${m[4]}至${y}-${m[5]}-${m[6]}`;
+                        }
+                    } else if (/^26年/.test(key) && key.includes('至')) {
+                        key = key.replace(/\s+/g, '\n');
+                    }
                     const v = _toNum(r[k]);
                     if (key === '项目' && v) hasProject = true;
                     o[key] = v;
