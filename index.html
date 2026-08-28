@@ -303,8 +303,8 @@
         </header>
 
         <!-- Stats Cards（顶部数据透视：按各项目"合计"行加总，多业态不重复计算） -->
-        <div class="grid grid-cols-7 gap-3 mb-6" id="statsCards">
-            <!-- 动态生成（7卡单行自适应宽度） -->
+        <div class="grid gap-3 mb-6" id="statsCards" style="grid-template-columns: repeat(8, minmax(0,1fr));">
+            <!-- 动态生成（8卡单行展示：整盘总套数/供应套数/网签套数/整盘网签均价/已推网签进度/整盘网签进度/整盘广义存量/上周网签数） -->
         </div>
 
         <!-- Tab Content -->
