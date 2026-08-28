@@ -67,6 +67,8 @@
             border-collapse: separate;
             border-spacing: 0;
         }
+        /* 关键：周度表强制固定布局，冻结列宽/周列宽均显式给定，避免浏览器自适应覆盖导致 sticky left 偏移、末列随滚动微移 */
+        #weeklyTable { table-layout: fixed; }
         
         th {
             background: var(--bg-card);
@@ -548,9 +550,10 @@
 
             // 冻结列配置：横向滚动时左侧关键列固定（类 Excel 冻结窗格）；固定宽度保证 sticky left 精确对齐
             const FREEZE_W = [150, 90, 80, 95, 95, 95, 105, 85, 85];
+            const WEEK_W = 84; // 周度列固定宽度（table-layout:fixed 下须显式给定，否则自适应覆盖冻结列宽致 sticky 偏移）
             const FREEZE_LEFT = (() => { const a = [0]; for (let i = 1; i < FREEZE_W.length; i++) a.push(a[i - 1] + FREEZE_W[i - 1]); return a; })();
             const freezeStyle = (i, extra = '') =>
-                `position:sticky; left:${FREEZE_LEFT[i]}px; width:${FREEZE_W[i]}px; min-width:${FREEZE_W[i]}px; z-index:20; ${extra}`;
+                `position:sticky; left:${FREEZE_LEFT[i]}px; width:${FREEZE_W[i]}px; min-width:${FREEZE_W[i]}px; max-width:${FREEZE_W[i]}px; z-index:20; ${extra}`;
 
             // 生成表头
             const weekColumns = weeklyData.length > 0
@@ -577,7 +580,7 @@
                         if (dm) dateRange = dm[1].slice(5) + '~' + dm[2].slice(5);
                         const rg = _weekKeyRange(w);
                         const isPrev = rg && rg.start === PREV_WEEK.start && rg.end === PREV_WEEK.end;
-                        return `<th class="week-cell week-header${isPrev ? ' week-prev' : ''}" title="${w.replace(/\n/g, ' ')}"><span class="week-label">W${wkNum}</span><span class="week-date">${dateRange}${isPrev ? ' ·上周' : ''}</span></th>`;
+                        return `<th class="week-cell week-header${isPrev ? ' week-prev' : ''}" style="width:${WEEK_W}px;" title="${w.replace(/\n/g, ' ')}"><span class="week-label">W${wkNum}</span><span class="week-date">${dateRange}${isPrev ? ' ·上周' : ''}</span></th>`;
                     }).join('')}
                 </tr>
             `;
@@ -673,13 +676,18 @@
                             const display = isNull ? '-' : (val > 0 ? val : '0');
                             const rg = _weekKeyRange(w);
                             const isPrev = rg && rg.start === PREV_WEEK.start && rg.end === PREV_WEEK.end;
-                            return `<td class="number-cell week-cell ${cellClass}${isPrev ? ' week-prev' : ''}">${display}</td>`;
+                            return `<td class="number-cell week-cell ${cellClass}${isPrev ? ' week-prev' : ''}" style="width:${WEEK_W}px;">${display}</td>`;
                         }).join('')}
                     </tr>
                 `;
             });
 
             tbody.innerHTML = html;
+
+            // 固定布局下显式锁定表格总宽 = 冻结列宽之和 + 周列数×周宽，确保 sticky left 偏移与实渲染宽精确一致，杜绝末列随滚动微移
+            const totalW = FREEZE_W.reduce((a, b) => a + b, 0) + (weekColumns ? weekColumns.length : 0) * WEEK_W;
+            const tbl = document.getElementById('weeklyTable');
+            if (tbl) tbl.style.width = totalW + 'px';
         }
 
 
