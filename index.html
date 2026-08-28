@@ -547,7 +547,7 @@
             const tbody = document.getElementById('weeklyBody');
 
             // 冻结列配置：横向滚动时左侧关键列固定（类 Excel 冻结窗格）；固定宽度保证 sticky left 精确对齐
-            const FREEZE_W = [150, 90, 80, 95, 95, 95, 105, 85];
+            const FREEZE_W = [150, 90, 80, 95, 95, 95, 105, 85, 85];
             const FREEZE_LEFT = (() => { const a = [0]; for (let i = 1; i < FREEZE_W.length; i++) a.push(a[i - 1] + FREEZE_W[i - 1]); return a; })();
             const freezeStyle = (i, extra = '') =>
                 `position:sticky; left:${FREEZE_LEFT[i]}px; width:${FREEZE_W[i]}px; min-width:${FREEZE_W[i]}px; z-index:20; ${extra}`;
