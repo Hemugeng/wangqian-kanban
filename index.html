@@ -580,7 +580,7 @@
                         if (dm) dateRange = dm[1].slice(5) + '~' + dm[2].slice(5);
                         const rg = _weekKeyRange(w);
                         const isPrev = rg && rg.start === PREV_WEEK.start && rg.end === PREV_WEEK.end;
-                        return `<th class="week-cell week-header${isPrev ? ' week-prev' : ''}" style="width:${WEEK_W}px;" title="${w.replace(/\n/g, ' ')}"><span class="week-label">W${wkNum}</span><span class="week-date">${dateRange}${isPrev ? ' ·上周' : ''}</span></th>`;
+                        return `<th class="week-cell week-header${isPrev ? ' week-prev' : ''}" style="width:${WEEK_W}px;" title="${w.replace(/\n/g, ' ')}"><span class="week-label">${isPrev ? '上周W' : 'W'}${wkNum}</span><span class="week-date">${dateRange}</span></th>`;
                     }).join('')}
                 </tr>
             `;
