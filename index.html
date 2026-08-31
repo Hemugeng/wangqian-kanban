@@ -688,8 +688,37 @@
             const totalW = FREEZE_W.reduce((a, b) => a + b, 0) + (weekColumns ? weekColumns.length : 0) * WEEK_W;
             const tbl = document.getElementById('weeklyTable');
             if (tbl) tbl.style.width = totalW + 'px';
+            requestAnimationFrame(scrollPrevToRight);
         }
 
+
+        // 打开看板时自动将"上一周"高亮列滚动至屏幕最右；用户手动滚动后停止自动跟随，窗口尺寸变化(resize)后恢复跟随
+        let _autoFollowPrev = true;
+        let _progScroll = false;
+        function scrollPrevToRight() {
+            if (!_autoFollowPrev) return;
+            const container = document.querySelector('.table-container');
+            const prevTh = document.querySelector('#weeklyHeader th.week-prev');
+            if (!container || !prevTh) return;
+            const cLeft = container.getBoundingClientRect().left;
+            const pLeftDoc = prevTh.getBoundingClientRect().left - cLeft + container.scrollLeft;
+            const target = pLeftDoc + prevTh.offsetWidth - container.clientWidth;
+            _progScroll = true;
+            container.scrollLeft = Math.max(0, target);
+        }
+        (function bindPrevFollow() {
+            const container = document.querySelector('.table-container');
+            if (!container) return;
+            container.addEventListener('scroll', () => {
+                if (_progScroll) { _progScroll = false; return; }
+                _autoFollowPrev = false;
+            });
+            let rt;
+            window.addEventListener('resize', () => {
+                clearTimeout(rt);
+                rt = setTimeout(() => { _autoFollowPrev = true; scrollPrevToRight(); }, 200);
+            });
+        })();
 
         // 切换标签页
         function switchTab(tab) {
