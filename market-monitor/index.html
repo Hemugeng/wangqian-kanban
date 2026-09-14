@@ -89,7 +89,8 @@
   th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border)}
   th{color:var(--muted);font-weight:500;font-size:12px}
   td.num{font-variant-numeric:tabular-nums}
-  .badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11.5px;font-weight:500}
+  #matrix td:last-child{white-space:nowrap;min-width:110px}
+  .badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11.5px;font-weight:500;white-space:nowrap}
   .b-green{background:rgba(48,180,110,.16);color:#5fd39a}
   .b-blue{background:rgba(91,141,239,.16);color:#8fb1ff}
   .b-yellow{background:rgba(230,179,30,.15);color:var(--yellow)}
@@ -601,9 +602,9 @@ function render(){
       <td>${c}</td><td class="num">${gInv}</td><td class="num">${gPer}</td>
       <td class="num">${sInv}</td><td class="num">${sPer}</td>
       <td>
-        <div style="line-height:1.75;font-size:12px">
-          <div><span class="badge ${sCls}">${badgeText(sSig)}</span><span style="color:var(--muted);margin-left:6px">狭义库存 ${sPer}月</span></div>
-          <div style="margin-top:4px"><span class="badge ${gCls}">${badgeText(gSig)}</span><span style="color:var(--muted);margin-left:6px">广义库存 ${gPer}月</span></div>
+        <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-start">
+          <div style="display:flex;align-items:center;gap:6px;white-space:nowrap"><span style="color:var(--muted)">狭义库存</span><span class="badge ${sCls}">${badgeText(sSig)}</span></div>
+          <div style="display:flex;align-items:center;gap:6px;white-space:nowrap"><span style="color:var(--muted)">广义库存</span><span class="badge ${gCls}">${badgeText(gSig)}</span></div>
         </div>
       </td>
     </tr>`;
