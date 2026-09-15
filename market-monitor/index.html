@@ -95,31 +95,7 @@
   .b-blue{background:rgba(91,141,239,.16);color:#8fb1ff}
   .b-yellow{background:rgba(230,179,30,.15);color:var(--yellow)}
   .b-red{background:rgba(229,83,75,.16);color:#ff8a82}
-  /* 一二手价差 */
-  .gap-cols{display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start}
-  .gap-nums{display:flex;gap:10px;margin-bottom:4px}
-  .gap-num{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
-  .gap-num .gn-label{font-size:11px;color:var(--muted)}
-  .gap-num .gn-val{font-size:16px;font-weight:500;margin-top:3px}
-  .gap-zone{position:relative;height:24px;border-radius:12px;overflow:hidden;margin-top:16px}
-  .gap-seg{position:absolute;top:0;height:100%}
-  .gap-mark{position:absolute;top:-5px;width:3px;height:34px;background:var(--text);border-radius:2px;transform:translateX(-1.5px)}
-  .gap-caption{display:flex;justify-content:space-between;font-size:10.5px;color:var(--faint);margin-top:6px}
-  .gap-rate{font-size:28px;font-weight:500}
-  .gap-status{font-size:12.5px;margin-top:4px;font-weight:500}
-  .gap-note{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.7}
-  /* 分总价段 · 新房 vs 二手均价 */
-  .gap-bands{margin-top:20px;border-top:1px dashed var(--border);padding-top:16px}
-  .gap-bands-title{font-size:13px;font-weight:600;margin-bottom:4px}
-  .gap-bands-cap{font-size:11px;color:var(--faint);margin-bottom:12px}
-  .gap-tbl{width:100%;border-collapse:collapse;font-size:12.5px}
-  .gap-tbl th,.gap-tbl td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--border)}
-  .gap-tbl th:first-child,.gap-tbl td:first-child{text-align:left;color:var(--muted)}
-  .gap-tbl th{color:var(--faint);font-weight:500;font-size:11px}
-  .gap-tbl td.newp{font-weight:500}
-  .gap-tbl .rate-p{color:var(--teal);font-weight:500}
-  .gap-tbl .rate-n{color:var(--red);font-weight:500}
-  .gap-tbl .rate-f{color:var(--yellow);font-weight:500}
+  /* 一二手价差联动模块已下线（2026-09-15），相关样式已移除 */
   /* 分总价段套数占比 */
   .band-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;position:relative}
   .band-name{width:78px;font-size:11.5px;color:var(--muted);text-align:right;flex-shrink:0}
@@ -144,7 +120,7 @@
   <header data-page-node-id="Z5Fl501qX9tvCNMmxl0Gg4">
     <div data-page-node-id="S5Yz1sQMlzsqcWU6nyGnsZ">
       <h1 data-page-node-id="nMmEVVUKW7EoEJJtNgM754">基础市场监测升级 · 信号仪表盘</h1>
-      <div class="sub" data-page-node-id="tvSt5clZqQrsudjykOuvc6">杭八区 · 三层信号 · 跨市场传导链 · 圈层机会矩阵（广义/狭义） · 一二手价差</div>
+      <div class="sub" data-page-node-id="tvSt5clZqQrsudjykOuvc6">杭八区 · 三层信号 · 跨市场传导链 · 圈层机会矩阵（广义/狭义）</div>
       <div class="sub" id="data-note" style="margin-top:2px">数据快照：底表数据月份 2026-08（每月更新底表后重新发布）</div>
     </div>
     <div class="controls" data-page-node-id="3nsyDldwDWOIEK3XuV3gNP">
@@ -205,10 +181,7 @@
   </section>
   </div>
 
-  <section class="card sec" data-page-node-id="EgPQ7a1ZNyECXAdFvrhIWi">
-    <div class="sec-title" data-page-node-id="TOPp4yMHbJCVVbg1LS2qcm"><b data-page-node-id="G9lNndhyO8SMMT7cUFQyqj">一二手价差联动</b> · 限价放开后的「定价锚」</div>
-    <div id="pricegap" data-page-node-id="KbjDZbJ4RTBSeiMbHDYXcx"></div>
-  </section>
+  <!-- 一二手价差联动模块已下线（2026-09-15）；台账《监测指标台账·分总价段均价》行已删除 -->
 
   <footer data-page-node-id="cYiGd157fhYs4JuXBfumCV">本 Demo 用于评判「框架逻辑 / 信号设计 / 交互」，全部数值为演示用途。落地时接入：同策（新房）、袋鼠汇网签+门店口径（二手）、贝壳带看与挂牌调价（先行）、土地出让与规划公示（供应）。</footer>
 </div>
@@ -279,14 +252,6 @@ const FALLBACK_DATA = { "杭八区": {
       ["3000万以上",0.8,0.0,"flat",45,35,0.45,0.35]
     ],
     note:"一二手房合计成交高度集中于 600 万以下，其中 400–500 万为单段峰值；看板端环比以「百分点差值（pp）」呈现，柱状图按新房/二手房堆叠着色。"},
-  priceGapBands:[
-    ["300万以下",2.85,2.65,2.80,2.66],["300-400万",3.10,2.90,3.05,2.91],
-    ["400-500万",3.60,3.30,3.52,3.31],["500-600万",4.00,3.60,3.92,3.61],
-    ["600-800万",4.40,3.95,4.30,3.96],["800-1000万",4.90,4.35,4.82,4.36],
-    ["1000-1200万",5.30,4.60,5.18,4.62],["1200-1500万",5.80,4.95,5.65,4.98],
-    ["1500-1800万",6.40,5.30,6.22,5.34],["1800-2000万",7.00,5.60,6.80,5.66],
-    ["2000万以上",8.50,6.40,8.30,6.48]
-  ]
 } };
 const FALLBACK_CIRCLES = [
   // [圈层, 广义库存, 广义去化, 狭义库存, 狭义去化, 广义信号, 狭义信号, 判定文案]
@@ -455,29 +420,7 @@ function parseWorkbook(wb){
   }
   const pbRows = groupBandRows();
 
-  // 分总价段 · 新房/二手成交均价（Excel 行 29–50，T 索引 28–49，11 档 × 2 行：新房均价 / 二手均价）
-  const GA_BANDS = ["300万以下","300-400万","400-500万","500-600万","600-800万","800-1000万","1000-1200万","1200-1500万","1500-1800万","1800-2000万","2000万以上"];
-  const bandRows = {};
-  for(let r=28; r<T.length; r++){
-    const nm = g(r,1); if(!nm) continue;
-    const s = String(nm);
-    for(const lbl of GA_BANDS){
-      if(s === lbl+" 新房均价"){ (bandRows[lbl]=bandRows[lbl]||{}).na=r; }
-      else if(s === lbl+" 二手均价"){ (bandRows[lbl]=bandRows[lbl]||{}).sa=r; }
-    }
-  }
-  const glRows = GA_BANDS.map(lbl=>{
-    const br = bandRows[lbl]||{};
-    // 台账均价填的是元/㎡（如 19772），看板统一按万元/㎡ 呈现：量级 >1000 视为元，除 10000
-    const toWan = v => (v==null||isNaN(v)) ? NaN : (Math.abs(v)>1000 ? v/10000 : v);
-    const na  = toWan(br.na!=null  ? num(g(br.na,  mVal(latest))) : NaN);
-    const sa  = toWan(br.sa!=null  ? num(g(br.sa,  mVal(latest))) : NaN);
-    const naP = toWan((br.na!=null && prev>=0) ? num(g(br.na, mVal(prev))) : NaN);
-    const saP = toWan((br.sa!=null && prev>=0) ? num(g(br.sa, mVal(prev))) : NaN);
-    return [lbl, na, sa, naP, saP];
-  });
-  // 11 档均价全部未填时置空，渲染端回退示意值；任一档填数则按真实数据呈现
-  const bandsFilled = glRows.some(r=>!isNaN(r[1])||!isNaN(r[2]));
+  // 一二手价差联动模块已下线（2026-09-15）：分总价段均价行已从《监测指标台账》删除，价差率实时计算需求取消
 
   function layerSig(arr){ const order={g:1,b:2,y:3,r:4}; let worst="g"; arr.forEach(it=>{ if(order[it.s]>order[worst]) worst=it.s; }); return worst; }
   function layerText(s){ return s==="g"?"转暖":s==="b"?"良好":s==="r"?"风险":"待确认"; }
@@ -487,8 +430,7 @@ function parseWorkbook(wb){
     verdict: Object.assign({}, NARRATIVE.verdict, {layers:vLayers}),
     leading, sync, syncGroups, lag,
     chain: NARRATIVE.chain,
-    priceBand: { update: MONTHS[bLatest], unit:"套数占比", rows: pbRows, note: NARRATIVE.priceBandNote },
-    priceGapBands: bandsFilled ? glRows : null
+    priceBand: { update: MONTHS[bLatest], unit:"套数占比", rows: pbRows, note: NARRATIVE.priceBandNote }
   };
   const result = { "杭八区": inner };
   result.meta = { latest, month: MONTHS[latest] };
@@ -508,7 +450,7 @@ function badgeClass(b){ return BADGE[b] ? BADGE[b][0] : "b-yellow"; }
 function badgeText(b){ return BADGE[b] ? BADGE[b][1] : "有压力"; }
 function dotCls(b){ return b==="g"?"g":b==="b"?"b":b==="r"?"r":"y"; }
 
-const EMBEDDED_DATA = {"杭八区":{"verdict":{"score":58,"temp":"回暖初期 · 谨慎观察","headline":"先行信号转暖，同步尚未确认，处于拐点观察期","desc":"带看量连续回升、挂牌降价占比收窄，但来访与网签仍未同步放量。建议：维持现行假设，等待同步层确认后再上调。","layers":[["先行","y","待确认"],["同步","y","待确认"],["滞后","y","待确认"]]},"leading":[{"n":"周均二手带看量","v":"13,379组","m":"环比+1.9%","d":"up","s":"g","note":"连续回升，领先网签约2周"},{"n":"挂牌降价占比","v":"—","m":"—","d":"flat","s":"y","note":"降价盘占比收窄，议价空间缩小"},{"n":"近郊及以上土地出让溢价","v":"14.2%","m":"环比+0.0%","d":"flat","s":"y","note":"核心外溢+近郊板块溢价回升，预期转强"}],"sync":[{"n":"典型续销项目周均来访","v":"2256组","m":"环比+2.9%","d":"up","s":"g","note":"小幅回升，未形成趋势"},{"n":"典型续销项目周均认购","v":"91套","m":"环比+19.7%","d":"up","s":"g","note":"认购领先网签2-4周"},{"n":"新房网签成交面积（万方）","v":"24.7万方","m":"环比+0.5%","d":"up","s":"g","note":"官方口径，略有滞后"},{"n":"新房成交均价","v":"4.17万/㎡","m":"环比-18.1%","d":"down","s":"y","note":"结构性微降"},{"n":"二手成交套数","v":"5,260套","m":"环比-5.2%","d":"down","s":"y","note":"二手成交平稳"},{"n":"二手成交均价","v":"2.51万/㎡","m":"环比-7.6%","d":"down","s":"y","note":"议价空间约3%"},{"n":"二手挂牌套数","v":"193,136套","m":"环比-0.6%","d":"down","s":"g","note":"挂牌存量反映供给压力；与成交套数联动看去化"},{"n":"二手挂牌均价","v":"3.59万/㎡","m":"环比-0.2%","d":"down","s":"y","note":"业主预期参考；挂牌与成交价差=议价空间"}],"syncGroups":[{"label":"新房","items":[{"n":"典型续销项目周均来访","v":"2256组","m":"环比+2.9%","d":"up","s":"g","note":"小幅回升，未形成趋势"},{"n":"典型续销项目周均认购","v":"91套","m":"环比+19.7%","d":"up","s":"g","note":"认购领先网签2-4周"},{"n":"新房网签成交面积（万方）","v":"24.7万方","m":"环比+0.5%","d":"up","s":"g","note":"官方口径，略有滞后"},{"n":"新房成交均价","v":"4.17万/㎡","m":"环比-18.1%","d":"down","s":"y","note":"结构性微降"}]},{"label":"二手房","items":[{"n":"二手成交套数","v":"5,260套","m":"环比-5.2%","d":"down","s":"y","note":"二手成交平稳"},{"n":"二手成交均价","v":"2.51万/㎡","m":"环比-7.6%","d":"down","s":"y","note":"议价空间约3%"},{"n":"二手挂牌套数","v":"193,136套","m":"环比-0.6%","d":"down","s":"g","note":"挂牌存量反映供给压力；与成交套数联动看去化"},{"n":"二手挂牌均价","v":"3.59万/㎡","m":"环比-0.2%","d":"down","s":"y","note":"业主预期参考；挂牌与成交价差=议价空间"}]}],"lag":[{"n":"狭义去化周期","v":"6.7月","m":"环比-1.5%","d":"down","s":"b","note":"已取证未售口径（圈层矩阵·杭八区）；卡位：≤6月优秀 / ≤12月良好 / >12月有压力。"},{"n":"广义去化周期","v":"25月","m":"环比-7.7%","d":"down","s":"y","note":"全口径可售货源含待取证（圈层矩阵·杭八区）；卡位：≤12月优秀 / ≤24月良好 / 24–30月有压力 / >30月风险。"},{"n":"价格指数","v":"—","m":"—","d":"flat","s":"g","note":"同比仍下行，跌幅收窄"},{"n":"新房供求比","v":1.11,"m":"环比+38.8%","d":"up","s":"y","note":"刚需段供不应求，改善段平衡，大户型过剩","breakdown":[["<90㎡",0.7,"g"],["90-100㎡",0.53,"g"],["100-120㎡",1.24,"r"],["120-130㎡",1.03,"y"],["130-140㎡",1.25,"r"],["140-160㎡",1.91,"r"],["160-180㎡",1.67,"r"],["180-200㎡",2.06,"r"],["200-220㎡",0.93,"y"],["220-250㎡",0.19,"g"],["250-280㎡",1.04,"y"],["280-300㎡",0.19,"g"],["300㎡以上",0.54,"g"]]}],"chain":[["土地","预期转强","st-y"],["二手","挂牌收窄","st-g"],["新房","待确认","st-y"],["客户","观望减弱","st-y"]],"priceBand":{"update":"2026-08","unit":"套数占比","rows":[["300万以下",61.3,-1.8,"down",414,3066,7.3,54],["300-400万",12.5,1,"up",229,483,4,8.5],["400-500万",9.8,1.8,"up",312,244,5.5,4.3],["500-600万",5.5,0.5,"up",209,103,3.7,1.8],["600-800万",4.5,1,"up",151,102,2.7,1.8],["800-1000万",2.7,0.5,"up",117,38,2.1,0.7],["1000-1200万",0.8,-0.3,"down",30,17,0.5,0.3],["1200-1500万",0.7,-0.6,"down",32,10,0.6,0.2],["1500-1800万",0.5,-0.4,"down",25,4,0.4,0.1],["1800-2000万",0.2,-0.1,"down",7,4,0.1,0.1],["2000-2500万",0.3,-0.5,"down",14,1,0.2,0],["2500-3000万",0.2,-0.4,"down",6,4,0.1,0.1],["3000万以上",0.9,-0.7,"down",45,8,0.8,0.1]],"note":"一二手房合计成交高度集中于 600 万以下（合计约 73%），其中 400–500 万为单段峰值（19.6%）、300–600 万合计约 47%；600–1000 万改善段占 16.9%；1000 万以上合计 10%，其中 2000 万+ 高端段约 4.1%。（占比随 Excel 套数自动计算，新房/二手房堆叠呈现；环比为绝对百分点差值 pp）"},"priceGapBands":[["300万以下",1.9163,1.827,2.0418,1.8987],["300-400万",2.979,2.9768,2.8979,2.9683],["400-500万",3.3379,3.4417,3.3649,3.4717],["500-600万",3.7278,3.8082,3.592,3.9302],["600-800万",3.8975,4.3043,3.725,4.3184],["800-1000万",4.6335,4.8547,4.5029,4.7763],["1000-1200万",4.7106,5.4442,4.9157,4.56],["1200-1500万",5.4608,5.9677,5.3883,6.3445],["1500-1800万",6.4784,4.9405,6.4624,6.1399],["1800-2000万",7.6516,6.8433,7.0087,7.9935],["2000万以上",8.3907,11.4146,11.171,12.9948]]}};
+const EMBEDDED_DATA = {"杭八区":{"verdict":{"score":58,"temp":"回暖初期 · 谨慎观察","headline":"先行信号转暖，同步尚未确认，处于拐点观察期","desc":"带看量连续回升、挂牌降价占比收窄，但来访与网签仍未同步放量。建议：维持现行假设，等待同步层确认后再上调。","layers":[["先行","y","待确认"],["同步","y","待确认"],["滞后","y","待确认"]]},"leading":[{"n":"周均二手带看量","v":"13,379组","m":"环比+1.9%","d":"up","s":"g","note":"连续回升，领先网签约2周"},{"n":"挂牌降价占比","v":"—","m":"—","d":"flat","s":"y","note":"降价盘占比收窄，议价空间缩小"},{"n":"近郊及以上土地出让溢价","v":"14.2%","m":"环比+0.0%","d":"flat","s":"y","note":"核心外溢+近郊板块溢价回升，预期转强"}],"sync":[{"n":"典型续销项目周均来访","v":"2256组","m":"环比+2.9%","d":"up","s":"g","note":"小幅回升，未形成趋势"},{"n":"典型续销项目周均认购","v":"91套","m":"环比+19.7%","d":"up","s":"g","note":"认购领先网签2-4周"},{"n":"新房网签成交面积（万方）","v":"24.7万方","m":"环比+0.5%","d":"up","s":"g","note":"官方口径，略有滞后"},{"n":"新房成交均价","v":"4.17万/㎡","m":"环比-18.1%","d":"down","s":"y","note":"结构性微降"},{"n":"二手成交套数","v":"5,260套","m":"环比-5.2%","d":"down","s":"y","note":"二手成交平稳"},{"n":"二手成交均价","v":"2.51万/㎡","m":"环比-7.6%","d":"down","s":"y","note":"议价空间约3%"},{"n":"二手挂牌套数","v":"193,136套","m":"环比-0.6%","d":"down","s":"g","note":"挂牌存量反映供给压力；与成交套数联动看去化"},{"n":"二手挂牌均价","v":"3.59万/㎡","m":"环比-0.2%","d":"down","s":"y","note":"业主预期参考；挂牌与成交价差=议价空间"}],"syncGroups":[{"label":"新房","items":[{"n":"典型续销项目周均来访","v":"2256组","m":"环比+2.9%","d":"up","s":"g","note":"小幅回升，未形成趋势"},{"n":"典型续销项目周均认购","v":"91套","m":"环比+19.7%","d":"up","s":"g","note":"认购领先网签2-4周"},{"n":"新房网签成交面积（万方）","v":"24.7万方","m":"环比+0.5%","d":"up","s":"g","note":"官方口径，略有滞后"},{"n":"新房成交均价","v":"4.17万/㎡","m":"环比-18.1%","d":"down","s":"y","note":"结构性微降"}]},{"label":"二手房","items":[{"n":"二手成交套数","v":"5,260套","m":"环比-5.2%","d":"down","s":"y","note":"二手成交平稳"},{"n":"二手成交均价","v":"2.51万/㎡","m":"环比-7.6%","d":"down","s":"y","note":"议价空间约3%"},{"n":"二手挂牌套数","v":"193,136套","m":"环比-0.6%","d":"down","s":"g","note":"挂牌存量反映供给压力；与成交套数联动看去化"},{"n":"二手挂牌均价","v":"3.59万/㎡","m":"环比-0.2%","d":"down","s":"y","note":"业主预期参考；挂牌与成交价差=议价空间"}]}],"lag":[{"n":"狭义去化周期","v":"6.7月","m":"环比-1.5%","d":"down","s":"b","note":"已取证未售口径（圈层矩阵·杭八区）；卡位：≤6月优秀 / ≤12月良好 / >12月有压力。"},{"n":"广义去化周期","v":"25月","m":"环比-7.7%","d":"down","s":"y","note":"全口径可售货源含待取证（圈层矩阵·杭八区）；卡位：≤12月优秀 / ≤24月良好 / 24–30月有压力 / >30月风险。"},{"n":"价格指数","v":"—","m":"—","d":"flat","s":"g","note":"同比仍下行，跌幅收窄"},{"n":"新房供求比","v":1.11,"m":"环比+38.8%","d":"up","s":"y","note":"刚需段供不应求，改善段平衡，大户型过剩","breakdown":[["<90㎡",0.7,"g"],["90-100㎡",0.53,"g"],["100-120㎡",1.24,"r"],["120-130㎡",1.03,"y"],["130-140㎡",1.25,"r"],["140-160㎡",1.91,"r"],["160-180㎡",1.67,"r"],["180-200㎡",2.06,"r"],["200-220㎡",0.93,"y"],["220-250㎡",0.19,"g"],["250-280㎡",1.04,"y"],["280-300㎡",0.19,"g"],["300㎡以上",0.54,"g"]]}],"chain":[["土地","预期转强","st-y"],["二手","挂牌收窄","st-g"],["新房","待确认","st-y"],["客户","观望减弱","st-y"]],"priceBand":{"update":"2026-08","unit":"套数占比","rows":[["300万以下",61.3,-1.8,"down",414,3066,7.3,54],["300-400万",12.5,1,"up",229,483,4,8.5],["400-500万",9.8,1.8,"up",312,244,5.5,4.3],["500-600万",5.5,0.5,"up",209,103,3.7,1.8],["600-800万",4.5,1,"up",151,102,2.7,1.8],["800-1000万",2.7,0.5,"up",117,38,2.1,0.7],["1000-1200万",0.8,-0.3,"down",30,17,0.5,0.3],["1200-1500万",0.7,-0.6,"down",32,10,0.6,0.2],["1500-1800万",0.5,-0.4,"down",25,4,0.4,0.1],["1800-2000万",0.2,-0.1,"down",7,4,0.1,0.1],["2000-2500万",0.3,-0.5,"down",14,1,0.2,0],["2500-3000万",0.2,-0.4,"down",6,4,0.1,0.1],["3000万以上",0.9,-0.7,"down",45,8,0.8,0.1]],"note":"一二手房合计成交高度集中于 600 万以下（合计约 73%），其中 400–500 万为单段峰值（19.6%）、300–600 万合计约 47%；600–1000 万改善段占 16.9%；1000 万以上合计 10%，其中 2000 万+ 高端段约 4.1%。（占比随 Excel 套数自动计算，新房/二手房堆叠呈现；环比为绝对百分点差值 pp）"}}};
   const EMBEDDED_CIRCLES = [["杭八区",941.4,25,252,6.7,"y","b","广义库存有压力，狭义库存良好"],["核心",105.5,16.2,22.1,3.4,"b","g","广义库存良好，狭义库存优秀"],["次核",186.9,14.5,34.2,2.6,"b","g","广义库存良好，狭义库存优秀"],["近郊",302.4,24.4,81.2,6.6,"y","b","广义库存有压力，狭义库存良好"],["远郊",346.6,58.5,114.5,19.3,"r","y","广义库存风险，狭义库存有压力"]];
   let DATA = EMBEDDED_DATA;
   let CIRCLES = EMBEDDED_CIRCLES;
@@ -610,65 +552,7 @@ function render(){
     </tr>`;
   }).join("");
 
-  const gapEl = document.getElementById("pricegap");
-  const GAP_BANDS = [
-    ["300万以下",2.85,2.65,2.80,2.66],["300-400万",3.10,2.90,3.05,2.91],
-    ["400-500万",3.60,3.30,3.52,3.31],["500-600万",4.00,3.60,3.92,3.61],
-    ["600-800万",4.40,3.95,4.30,3.96],["800-1000万",4.90,4.35,4.82,4.36],
-    ["1000-1200万",5.30,4.60,5.18,4.62],["1200-1500万",5.80,4.95,5.65,4.98],
-    ["1500-1800万",6.40,5.30,6.22,5.34],["1800-2000万",7.00,5.60,6.80,5.66],
-    ["2000万以上",8.50,6.40,8.30,6.48]
-  ];
-  const bands = (d.priceGapBands && d.priceGapBands.length) ? d.priceGapBands : GAP_BANDS;
-  const np = d.sync.find(x=>x.n==="新房成交均价");
-  const sp = d.sync.find(x=>x.n==="二手成交均价");
-  const newAvg = np ? parseFloat(String(np.v).replace(/[^\d.]/g,"")) : 0;
-  const secAvg = sp ? parseFloat(String(sp.v).replace(/[^\d.]/g,"")) : 0;
-  const gapPct = secAvg ? (newAvg - secAvg)/secAvg*100 : 0;
-  const gapRate = (gapPct>=0?"+":"") + gapPct.toFixed(1) + "%";
-  const gsColor = gapPct >= 2 ? "var(--teal)" : (gapPct <= -2 ? "var(--red)" : "var(--yellow)");
-  const gapStatus = gapPct >= 2 ? "新房溢价" : (gapPct <= -2 ? "二手倒挂" : "基本平价");
-  const pos = (gapPct + 10) / 25 * 100;
-  const gapNote = "限价放开后倒挂消失，价差收窄至个位数，打新红利退坡，二手分流压力上升。价差率 = (新房成交均价 − 二手成交均价) ÷ 二手成交均价，由同步指标两行实时计算。";
-  gapEl.innerHTML = `
-    <div class="gap-cols">
-      <div>
-        <div class="gap-nums">
-          <div class="gap-num"><div class="gn-label">新房成交均价</div><div class="gn-val">${np?np.v:"—"}</div></div>
-          <div class="gap-num"><div class="gn-label">二手成交均价</div><div class="gn-val">${sp?sp.v:"—"}</div></div>
-        </div>
-        <div class="gap-zone">
-          <div class="gap-seg" style="left:0;width:40%;background:rgba(229,83,75,.22)"></div>
-          <div class="gap-seg" style="left:40%;width:8%;background:rgba(230,179,30,.22)"></div>
-          <div class="gap-seg" style="left:48%;width:52%;background:rgba(48,180,110,.22)"></div>
-          <div class="gap-mark" style="left:${pos}%"></div>
-        </div>
-        <div class="gap-caption"><span>-10% 倒挂</span><span>平价</span><span>+15% 溢价</span></div>
-      </div>
-      <div>
-        <div class="gap-rate" style="color:${gsColor}">${gapRate}</div>
-        <div class="gap-status" style="color:${gsColor}">${gapStatus}</div>
-        <div class="gap-note">${gapNote}</div>
-      </div>
-    </div>
-    <div class="gap-bands">
-      <div class="gap-bands-title">分总价段 · 新房 vs 二手成交均价</div>
-      <div class="gap-bands-cap">口径：各总价段内新房/二手成交均价（万元/㎡）；价差率 =（新房 − 二手）÷ 二手；最右列 = 本月价差率 − 上月价差率（pp，正=溢价扩大）</div>
-      <table class="gap-tbl">
-        <thead><tr><th>总价段</th><th>新房均价</th><th>二手均价</th><th>价差率</th><th>价差率环比(pp)</th></tr></thead>
-        <tbody>${bands.map(b=>{
-          const [name,na,sa,naP,saP]=b;
-          const pct = sa ? (na-sa)/sa*100 : 0;
-          const rateTxt=(pct>=0?"+":"")+pct.toFixed(1)+"%";
-          const rc = pct>=2?"rate-p":(pct<=-2?"rate-n":"rate-f");
-          const prevRate = (saP && !isNaN(saP)) ? (naP-saP)/saP*100 : NaN;
-          const pp = (!isNaN(prevRate)) ? pct - prevRate : NaN;
-          const ppTxt = isNaN(pp)?"—":(pp>=0?"+":"")+pp.toFixed(1)+"pp";
-          const pc = isNaN(pp)?"rate-f":(pp>0.1?"rate-p":(pp<-0.1?"rate-n":"rate-f"));
-          return `<tr><td>${name}</td><td class="newp">${na.toFixed(2)}万/㎡</td><td>${sa.toFixed(2)}万/㎡</td><td class="${rc}">${rateTxt}</td><td class="${pc}">${ppTxt}</td></tr>`;
-        }).join("")}</tbody>
-      </table>
-    </div>`;
+  // 一二手价差联动模块已下线（2026-09-15）；下方衔接成交结构渲染
 
   const pbEl = document.getElementById("priceband");
   const pb = d.priceBand;
