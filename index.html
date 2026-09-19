@@ -215,9 +215,11 @@
         /* 合计行高亮：与各分面积段明细行区分（背景必须不透明，否则横向滚动时底层周度数据会穿透固定列） */
         tr.summary-row > td {
             background: #1e3a5f !important;
+            --fz-bg: #1e3a5f;
         }
         tr.summary-row > td.merged-cell {
             background: #2a4f80 !important;
+            --fz-bg: #2a4f80;
             color: #bfdbfe !important;
             font-weight: 700 !important;
         }
@@ -604,7 +606,7 @@
             const FREEZE_LEFT = (() => { const a = [0]; for (let i = 1; i < FREEZE_W.length; i++) a.push(a[i - 1] + FREEZE_W[i - 1]); return a; })();
             const freezeStyle = (i, extra = '') => {
                 const isLast = i === FREEZE_W.length - 1;
-                return `position:sticky; --frozen:1; left:${FREEZE_LEFT[i]}px; width:${FREEZE_W[i]}px; min-width:${FREEZE_W[i]}px; max-width:${FREEZE_W[i]}px; z-index:20; box-shadow: inset -1px 0 0 var(--border-color)${isLast ? ', 10px 0 0 0 var(--bg-card)' : ''}; text-align:center;${isLast ? ' border-right:3px solid var(--bg-card); --freeze-last:1;' : ''} ${extra}`;
+                return `position:sticky; --frozen:1; left:${FREEZE_LEFT[i]}px; width:${FREEZE_W[i]}px; min-width:${FREEZE_W[i]}px; max-width:${FREEZE_W[i]}px; z-index:20; box-shadow: inset -1px 0 0 var(--border-color)${isLast ? ', 10px 0 0 0 var(--bg-card)' : ', 5px 0 0 0 var(--fz-bg, var(--bg-card))'}; text-align:center;${isLast ? ' border-right:3px solid var(--bg-card); --freeze-last:1;' : ''} ${extra}`;
             };
 
             // 生成表头
