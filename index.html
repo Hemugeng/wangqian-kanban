@@ -93,8 +93,13 @@
             font-size: 0.875rem;
         }
 
-        /* 冻结末列遮罩：不透明实边框(border-right:3px) + 加厚不透明 box-shadow 遮罩帘(10px) 双保险，
-           彻底封堵横向滚动时右侧周度数据从缝隙穿透。伪元素方案在 td 上定位不可靠(落到表格右缘)，已弃用。 */
+        /* 冻结列遮罩：所有冻结列单元格改用不透明边框，避免横向滚动时周度内容从半透明边框缝隙透光；
+           末列额外加 border-right:3px 实边框 + 10px 不透明 box-shadow 遮罩帘双保险。
+           td::after 伪元素方案定位不可靠(落到表格右缘)，已弃用。 */
+        td[style*="--frozen:1"], th[style*="--frozen:1"] {
+            border-bottom-color: var(--border-color);
+            border-right-color: var(--border-color);
+        }
         
         tr:hover {
             background: rgba(59, 130, 246, 0.1);
@@ -599,7 +604,7 @@
             const FREEZE_LEFT = (() => { const a = [0]; for (let i = 1; i < FREEZE_W.length; i++) a.push(a[i - 1] + FREEZE_W[i - 1]); return a; })();
             const freezeStyle = (i, extra = '') => {
                 const isLast = i === FREEZE_W.length - 1;
-                return `position:sticky; left:${FREEZE_LEFT[i]}px; width:${FREEZE_W[i]}px; min-width:${FREEZE_W[i]}px; max-width:${FREEZE_W[i]}px; z-index:20; box-shadow: inset -1px 0 0 var(--border-color)${isLast ? ', 10px 0 0 0 var(--bg-card)' : ''}; text-align:center;${isLast ? ' border-right:3px solid var(--bg-card); --freeze-last:1;' : ''} ${extra}`;
+                return `position:sticky; --frozen:1; left:${FREEZE_LEFT[i]}px; width:${FREEZE_W[i]}px; min-width:${FREEZE_W[i]}px; max-width:${FREEZE_W[i]}px; z-index:20; box-shadow: inset -1px 0 0 var(--border-color)${isLast ? ', 10px 0 0 0 var(--bg-card)' : ''}; text-align:center;${isLast ? ' border-right:3px solid var(--bg-card); --freeze-last:1;' : ''} ${extra}`;
             };
 
             // 生成表头
