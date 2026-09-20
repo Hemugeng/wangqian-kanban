@@ -93,15 +93,26 @@
             font-size: 0.875rem;
         }
 
-        /* 冻结列遮罩：相邻冻结列间亚像素缝隙位于单元格右缘之外，普通右边框/box-shadow 在表格单元格
-           格式化上下文中均不可靠（box-shadow 不绘制、右边框无法延展到右缘之外）。改用 outline 绘制在
-           border-box 之外（向右延展覆盖缝隙），颜色取该单元格自身底色(--fz-bg)，保证相邻冻结列视觉无缝。
-           末列另加 border-right:3px 实边框 + 10px 不透明 box-shadow 遮罩帘双保险。 */
+        /* 冻结列遮罩（竖向无缝 + 横向行界清晰，2026-09-20 修正）：
+           - 竖向（列间）亚像素缝隙位于单元格右缘之外：box-shadow 在表格单元格上下文不绘制、普通右边框无法外扩；
+             改用语义化 ::after 右缘外扩 2px 不透明条（取单元格自身底色 --fz-bg）覆盖，且不压行内文字。
+           - 横向（行界）分界：恢复为可见底边色（与周度区一致），因 ::after 仅作用于右缘、不再覆盖底边。
+           - 末列保留 border-right:3px 实边框 + 10px box-shadow 遮罩帘。 */
         td[style*="--frozen:1"], th[style*="--frozen:1"] {
-            border-bottom-color: var(--fz-bg, var(--bg-card));
+            border-bottom-color: rgba(255,255,255,0.16);   /* 行与行分界清晰，与周度区风格一致 */
             border-right-color: var(--fz-bg, var(--bg-card));
-            outline: 3px solid var(--fz-bg, var(--bg-card));
-            outline-offset: 0;
+        }
+        th[style*="--frozen:1"] {
+            border-bottom-color: var(--border-color);       /* 表头与表体之间分隔更强 */
+        }
+        td[style*="--frozen:1"]::after, th[style*="--frozen:1"]::after {
+            content: '';
+            position: absolute;
+            top: 0; bottom: 0;
+            left: 100%;
+            width: 2px;
+            background: var(--fz-bg, var(--bg-card));
+            pointer-events: none;
         }
         
         tr:hover {
