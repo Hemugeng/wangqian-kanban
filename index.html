@@ -128,11 +128,15 @@
         /* 项目分界横向亮线：每个项目首行(首个项目除外)在冻结区顶部铺一条与边界亮线同色同法的亮线，
            提升项目间视觉区分度；挂在下一项目首行的项目列(最高 z-index:25、且晚于上一项目出现)上，
            故压在上一项目之上无遮挡。2px 亮线(绘于内容之上) + 3px 底色盖缝，横向铺满冻结区总宽。 */
+        /* 项目分界横向亮线（贯穿冻结区+周度区全宽）：挂在下一项目首行(非首个)的项目列 ::before 上，
+           top:0 即落在与上一项目的分界；width 取 --proj-line-w（JS 计算的整表内容宽：冻结列宽和+周列数×周宽），
+           故一条 ::before 同时覆盖冻结区与周度区，左右滚动时仍恒为满宽横线（横向线对横向滚动无感）。
+           z-index:2 压在首列竖向 ::after 之上，交界处无暗缺口。 */
         td[style*="--proj-start:1"]::before {
             content: '';
             position: absolute;
             top: 0; left: 0;
-            width: var(--freeze-total, 880px);
+            width: var(--proj-line-w, var(--freeze-total, 880px));
             height: 5px;
             background: linear-gradient(to bottom, var(--fz-edge, rgba(255,255,255,0.65)) 0 2px, var(--fz-bg, var(--bg-card)) 2px 5px);
             pointer-events: none;
@@ -724,6 +728,9 @@
                 }
             }
 
+            // 项目分界横线满宽 = 冻结列宽之和 + 周列数×周宽（table-layout:fixed 下整表内容宽）
+            const projLineW = FREEZE_W.reduce((a, b) => a + b, 0) + weekColumns.length * WEEK_W;
+
             let html = '';
             weeklyData.forEach((row, i) => {
                 const projectFull = row.项目 || '';
@@ -742,7 +749,7 @@
 
 
                 const projectTd = projectSpan[i] > 0
-                    ? `<td rowspan="${projectSpan[i]}" class="merged-cell" style="${freezeStyle(0, 'background:var(--bg-card) !important; ')}${i > 0 ? ' --proj-start:1;' : ''}">${projectFull}</td>`
+                    ? `<td rowspan="${projectSpan[i]}" class="merged-cell" style="${freezeStyle(0, 'background:var(--bg-card) !important; ')}${i > 0 ? ' --proj-start:1;' : ''} --proj-line-w:${projLineW}px;">${projectFull}</td>`
                     : '';
                 const productTypeTd = productTypeSpan[i] > 0
                     ? `<td rowspan="${productTypeSpan[i]}" class="merged-cell summary-cell" style="${freezeStyle(1, 'background:var(--bg-card); ')}${isSummaryRow ? 'font-weight:600;color:#60a5fa;' : ''}">${row.业态 || ''}</td>`
