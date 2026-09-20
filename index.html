@@ -21,6 +21,7 @@
             --accent-red: #ef4444;
             --border-color: #475569;
             --fz-edge: rgba(255,255,255,0.65);   /* 冻结区边界亮线（首/末冻结列右缘） */
+            --freeze-total: 880px;              /* 冻结区总宽，供项目分界横向亮线铺满 */
         }
         
         body {
@@ -123,6 +124,19 @@
             width: 5px;
             /* 2px 亮线(绘于内容之上，进度条等内容不会遮挡) + 3px 底色盖缝，不透光不受影响 */
             background: linear-gradient(to right, var(--fz-edge, rgba(255,255,255,0.65)) 0 2px, var(--fz-bg, var(--bg-card)) 2px 5px);
+        }
+        /* 项目分界横向亮线：每个项目首行(首个项目除外)在冻结区顶部铺一条与边界亮线同色同法的亮线，
+           提升项目间视觉区分度；挂在下一项目首行的项目列(最高 z-index:25、且晚于上一项目出现)上，
+           故压在上一项目之上无遮挡。2px 亮线(绘于内容之上) + 3px 底色盖缝，横向铺满冻结区总宽。 */
+        td[style*="--proj-start:1"]::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: var(--freeze-total, 880px);
+            height: 5px;
+            background: linear-gradient(to bottom, var(--fz-edge, rgba(255,255,255,0.65)) 0 2px, var(--fz-bg, var(--bg-card)) 2px 5px);
+            pointer-events: none;
+            z-index: 2;   /* 压在首列竖向边界 ::after(无 z-index) 之上，避免交界处出现暗色盖缝缺口 */
         }
         
         tr:hover {
@@ -728,7 +742,7 @@
 
 
                 const projectTd = projectSpan[i] > 0
-                    ? `<td rowspan="${projectSpan[i]}" class="merged-cell" style="${freezeStyle(0, 'background:var(--bg-card) !important; ')}">${projectFull}</td>`
+                    ? `<td rowspan="${projectSpan[i]}" class="merged-cell" style="${freezeStyle(0, 'background:var(--bg-card) !important; ')}${i > 0 ? ' --proj-start:1;' : ''}">${projectFull}</td>`
                     : '';
                 const productTypeTd = productTypeSpan[i] > 0
                     ? `<td rowspan="${productTypeSpan[i]}" class="merged-cell summary-cell" style="${freezeStyle(1, 'background:var(--bg-card); ')}${isSummaryRow ? 'font-weight:600;color:#60a5fa;' : ''}">${row.业态 || ''}</td>`
