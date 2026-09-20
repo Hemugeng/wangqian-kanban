@@ -20,6 +20,7 @@
             --accent-yellow: #eab308;
             --accent-red: #ef4444;
             --border-color: #475569;
+            --fz-edge: rgba(255,255,255,0.65);   /* 冻结区边界亮线（首/末冻结列右缘） */
         }
         
         body {
@@ -113,6 +114,15 @@
             width: 2px;
             background: var(--fz-bg, var(--bg-card));
             pointer-events: none;
+        }
+        /* 冻结区边界亮线：首列(项目)与末列(整盘网签进度)右缘亮色，清晰区隔冻结/滚动区；
+           ::after 让出 2px 亮边框、在其外侧仍以底色盖缝，不透光效果不受影响 */
+        td[style*="--freeze-first:1"]::after, th[style*="--freeze-first:1"]::after,
+        td[style*="--freeze-last:1"]::after,  th[style*="--freeze-last:1"]::after {
+            left: calc(100% + 2px);
+            width: 5px;
+            /* 2px 亮线(绘于内容之上，进度条等内容不会遮挡) + 3px 底色盖缝，不透光不受影响 */
+            background: linear-gradient(to right, var(--fz-edge, rgba(255,255,255,0.65)) 0 2px, var(--fz-bg, var(--bg-card)) 2px 5px);
         }
         
         tr:hover {
@@ -621,8 +631,9 @@
             const WEEK_W = 84; // 周度列固定宽度（table-layout:fixed 下须显式给定，否则自适应覆盖冻结列宽致 sticky 偏移）
             const FREEZE_LEFT = (() => { const a = [0]; for (let i = 1; i < FREEZE_W.length; i++) a.push(a[i - 1] + FREEZE_W[i - 1]); return a; })();
             const freezeStyle = (i, extra = '') => {
-                const isLast = i === FREEZE_W.length - 1;
-                return `position:sticky; --frozen:1; left:${FREEZE_LEFT[i]}px; width:${FREEZE_W[i]}px; min-width:${FREEZE_W[i]}px; max-width:${FREEZE_W[i]}px; z-index:20; box-shadow: inset -1px 0 0 var(--fz-bg, var(--bg-card))${isLast ? ', 10px 0 0 0 var(--fz-bg, var(--bg-card))' : ', 5px 0 0 0 var(--fz-bg, var(--bg-card))'}; text-align:center;${isLast ? ' border-right:3px solid var(--fz-bg, var(--bg-card)); --freeze-last:1;' : ''} ${extra}`;
+            const isLast = i === FREEZE_W.length - 1;
+            const isFirst = i === 0;
+            return `position:sticky; --frozen:1; left:${FREEZE_LEFT[i]}px; width:${FREEZE_W[i]}px; min-width:${FREEZE_W[i]}px; max-width:${FREEZE_W[i]}px; z-index:${i === 0 ? 25 : 20}; box-shadow: inset -1px 0 0 var(--fz-bg, var(--bg-card))${isLast ? ', 10px 0 0 0 var(--fz-bg, var(--bg-card))' : ', 5px 0 0 0 var(--fz-bg, var(--bg-card))'}; text-align:center;${isFirst ? ' border-right:2px solid transparent; --freeze-first:1;' : ''}${isLast ? ' border-right:2px solid transparent; --freeze-last:1;' : ''} ${extra}`;
             };
 
             // 生成表头
