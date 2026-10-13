@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>杭州市场周报看板 · 2026.7.20-7.26</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#f2f4f7; color:#1f2430; font-family:"Microsoft YaHei","PingFang SC",sans-serif; padding:26px 34px; }
+  .header { display:flex; align-items:center; gap:18px; background:#fff; border-bottom:3px solid #C8102E; padding:16px 22px; border-radius:6px 6px 0 0; }
+  .header h1 { font-size:25px; color:#1f2430; letter-spacing:2px; }
+  .header .sub { color:#6b7280; font-size:13.5px; }
+  .header .logo { margin-left:auto; }
+  .header .logo img { height:44px; display:block; }
+  .headerbar { background:#fff; margin-bottom:8px; border-radius:0 0 6px 6px; padding:0 22px 12px; }
+  .coreline { display:flex; gap:10px; flex-wrap:wrap; padding-top:12px; }
+  .chip { background:#f7f8fa; border:1px solid #e3e6ec; border-radius:4px; padding:7px 13px; font-size:12.5px; color:#6b7280; }
+  .chip b { color:#1f2430; font-size:15px; margin-left:6px; }
+  .chip b.up { color:#C8102E; } .chip b.down { color:#3A7D44; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:14px; }
+  .card { background:#fff; border:1px solid #e3e6ec; border-radius:6px; padding:18px 20px; box-shadow:0 1px 3px rgba(20,30,60,0.05); }
+  .card.wide { grid-column:1 / -1; }
+  .card-head { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .card-head .no { background:#C8102E; color:#fff; font-size:12px; width:22px; height:22px; display:flex; align-items:center; justify-content:center; border-radius:3px; font-weight:bold; flex:none; }
+  .card-head h2 { font-size:16px; color:#1f2430; letter-spacing:1px; }
+  .verdict { font-size:14.5px; color:#C8102E; font-weight:bold; margin-bottom:10px; letter-spacing:0.3px; line-height:1.5; }
+  .metrics { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .metric { background:#f7f8fa; border:1px solid #e9ecf1; border-radius:4px; padding:6px 12px; font-size:12px; color:#6b7280; }
+  .metric b { display:block; font-size:17px; color:#1f2430; margin-top:2px; }
+  .metric b small { font-size:11px; margin-left:4px; font-weight:normal; }
+  .metric b.up { color:#C8102E; } .metric b.down { color:#3A7D44; }
+  .note { font-size:12.5px; line-height:1.8; color:#3a4150; margin-top:10px; text-align:justify; }
+  .foot { font-size:11px; color:#9aa0ad; margin-top:10px; border-top:1px dashed #e3e6ec; padding-top:7px; }
+  table { width:100%; border-collapse:collapse; font-size:12.5px; margin-top:8px; }
+  .cmp-table th, .cmp-table td { text-align:center; padding:6px 7px; }
+  .cmp-table th[rowspan] { text-align:center; vertical-align:middle; }
+  .cmp-table td:first-child, .cmp-table th:first-child { text-align:left; }
+  .cmp-table th { background:#f2f4f7; }
+  th { background:#f2f4f7; color:#6b7280; font-weight:normal; padding:7px 8px; text-align:left; }
+  td { padding:7px 8px; border-bottom:1px solid #eef0f4; color:#3a4150; }
+  tr.hot td { color:#C8102E; font-weight:bold; }
+  .legend { display:flex; gap:16px; font-size:11.5px; color:#6b7280; margin:6px 0 2px; flex-wrap:wrap; }
+  .legend i { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:4px; vertical-align:-1px; }
+  .moves { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:4px; }
+  .move { background:#fafbfc; border:1px solid #eef0f4; border-left:3px solid #C8102E; padding:8px 10px; font-size:12px; line-height:1.65; color:#3a4150; }
+  .move.green { border-left-color:#3A7D44; }
+  .move b { color:#1f2430; display:block; margin-bottom:2px; font-size:12.5px; }
+  .brief { background:#fff; border:1px solid #e3e6ec; border-radius:6px; padding:20px 24px; margin-top:14px; box-shadow:0 1px 3px rgba(20,30,60,0.05); }
+  .brief p { font-size:13px; line-height:1.9; color:#2a3040; margin-bottom:6px; text-align:justify; }
+  .brief .bt { font-size:15.5px; font-weight:bold; color:#C8102E; margin-bottom:10px; }
+  .brief .bsec { font-weight:bold; color:#1f2430; margin-top:12px; }
+  .footer { margin-top:20px; font-size:11.5px; color:#9aa0ad; line-height:1.8; }
+  .polblock { margin:8px 0; }
+  .polblock b { color:#1f2430; }
+  .polblock p { font-size:12.5px; line-height:1.8; color:#3a4150; margin-top:4px; text-align:justify; }
+  .tabs { display:flex; gap:8px; flex-wrap:wrap; padding-top:12px; border-top:1px dashed #e3e6ec; margin-top:12px; }
+  .tab { background:#f2f4f7; border:1px solid #e3e6ec; color:#3a4150; font-size:13px; padding:7px 16px; border-radius:16px; cursor:pointer; font-family:inherit; }
+  .tab:hover { border-color:#C8102E; color:#C8102E; }
+  .tab.active { background:#C8102E; border-color:#C8102E; color:#fff; }
+  .layout { display:flex; gap:16px; align-items:flex-start; margin-top:14px; }
+  .timeline { width:200px; flex:none; background:#fff; border:1px solid #e3e6ec; border-radius:6px; padding:14px 12px; position:sticky; top:12px; max-height:calc(100vh - 24px); overflow:auto; }
+  .tl-title { font-size:14px; font-weight:bold; color:#1f2430; margin-bottom:10px; letter-spacing:1px; }
+  .tl-item { display:flex; align-items:center; gap:8px; padding:7px 8px; border-radius:4px; font-size:12px; color:#6b7280; margin-bottom:2px; }
+  .tl-item.has { cursor:pointer; color:#1f2430; }
+  .tl-item.has:hover { background:#fdf2f4; color:#C8102E; }
+  .tl-item.cur { background:#fdf2f4; color:#C8102E; font-weight:bold; }
+  .tl-item.off { color:#c3c8d1; }
+  .tl-item .dot { width:7px; height:7px; border-radius:50%; background:#d5d9e0; flex:none; }
+  .tl-item.has .dot, .tl-item.cur .dot { background:#C8102E; }
+  .tl-tag { margin-left:auto; font-size:10px; background:#f2f4f7; border-radius:3px; padding:1px 5px; color:#9aa0ad; flex:none; }
+  .tl-tag.open { color:#3A7D44; }
+  .tl-item.cur .tl-tag { background:#C8102E; color:#fff; }
+  .main { flex:1; min-width:0; }
+  .ph { font-size:13px; color:#9aa0ad; padding:26px 0; text-align:center; border:1px dashed #e3e6ec; border-radius:4px; }
+  .ovbar { margin-left:auto; display:flex; gap:6px; }
+  .ovbtn { background:#fff; border:1px solid #d9dce3; color:#3a4150; font-size:12px; padding:6px 12px; border-radius:14px; cursor:pointer; font-family:inherit; }
+  .ovbtn:hover { border-color:#C8102E; color:#C8102E; }
+  .ovbtn.on { background:#C8102E; border-color:#C8102E; color:#fff; }
+  body.editing .verdict, body.editing .note, body.editing .foot, body.editing .ph, body.editing .metric, body.editing .move {
+    outline:1.5px dashed #C8102E; outline-offset:2px; border-radius:2px; cursor:text; }
+  body.editing [contenteditable]:focus { outline:2px solid #C8102E; background:#fff6f6; }
+  body.editing [contenteditable] { caret-color:#C8102E; }
+  #tip { position:fixed; display:none; background:#1f2430; color:#fff; padding:5px 10px; border-radius:4px; font-size:12px; pointer-events:none; z-index:999; box-shadow:0 2px 8px rgba(0,0,0,0.25); white-space:nowrap; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>杭州市场周报看板</h1>
+  <span class="sub">统计周期：2026.7.20-7.26｜发布：初号机历史回填 2026.9.21</span>
+  <span class="logo"><img src="data:image/png;base64,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" alt="华润置地"></span>
+</div>
+<div class="headerbar">
+  <div class="coreline">
+    <span class="chip">供应面积 <b>6.4万方</b><small style="color:#C8102E;font-size:11px;margin-left:4px;font-weight:600">↑120.7%</small></span>
+    <span class="chip">新房成交 <b>4.0万方</b><small style="color:#C8102E;font-size:11px;margin-left:4px;font-weight:600">↑8.1%</small></span>
+    <span class="chip">新房均价 <b>40,167元/㎡</b><small style="color:#3A7D44;font-size:11px;margin-left:4px;font-weight:600">↓3.2%</small></span>
+    <span class="chip">显性库存 <b>250万方</b><small style="color:#3A7D44;font-size:11px;margin-left:4px;font-weight:600">↑1.2%</small></span>
+    <span class="chip">去化周期 <b>6.5个月</b><small style="color:#3A7D44;font-size:11px;margin-left:4px;font-weight:600">↑0.8个月</small></span>
+    <span class="chip">续销项目来访 <b>1,978组</b><small style="color:#3A7D44;font-size:11px;margin-left:4px;font-weight:600">↓1.0%</small></span>
+    <span class="chip">续销项目认购 <b>60套</b><small style="color:#3A7D44;font-size:11px;margin-left:4px;font-weight:600">↓6.3%</small></span>
+    <span class="chip">二手成交 <b>1,210套</b><small style="color:#3A7D44;font-size:11px;margin-left:4px;font-weight:600">↓9.6%</small></span>
+    <span class="chip">二手带看 <b>13,517次</b><small style="color:#3A7D44;font-size:11px;margin-left:4px;font-weight:600">↓5.0%</small></span>
+  </div>
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-tab="overview">总览</button>
+    <button class="tab" data-tab="policy">1.新政</button>
+    <button class="tab" data-tab="land">2.土地挂牌及成交</button>
+    <button class="tab" data-tab="plan">3.规划公示</button>
+    <button class="tab" data-tab="newhome">4.新房成交</button>
+    <button class="tab" data-tab="xs">5.续销项目表现</button>
+    <button class="tab" data-tab="open">6.上周开盘表现</button>
+    <button class="tab" data-tab="esf">7.二手房表现</button>
+    <button class="tab" data-tab="monitor">8.竞品监测</button>
+    <span class="ovbar">
+      <button class="ovbtn" id="editBtn" title="进入编辑模式后，直接点击卡片中的结论/分析/脚注文字修改">✎ 编辑文字</button>
+      <button class="ovbtn" id="exportOvBtn" title="把本页修正导出为 overrides JSON，放入工作区后重新生成即永久生效">⬇ 导出修正</button>
+      <button class="ovbtn" id="clearOvBtn" title="清除本浏览器保存的修正，恢复生成版内容">↺ 还原</button>
+    </span>
+  </div>
+</div>
+
+<div class="layout">
+<aside class="timeline">
+  <div class="tl-title">周报回溯</div>
+  <div id="tlList"></div>
+</aside>
+<main class="main">
+
+<div class="brief">
+<p class="bt">【2026.7.20-7.26 杭州市场简报（历史回填）】</p>
+<p>本周新房新增供应6.4万㎡，环比上涨121%；网签成交4.0万㎡，环比上涨8%；成交均价约4.0万元/㎡，环比下降3%。</p>
+<p class="bsec">【一、新房表现】</p>
+<p>网签：当周新房新增供应6.4万㎡；网签成交4.0万㎡，环比上涨8%；成交均价约4.0万元/㎡，环比下降3%；<br>
+来访：全市21个典型项目来访1,978组（合计）；<br>
+认购：全市21个典型项目认购60套（合计）。</p>
+<p class="bsec">【二、二手房表现】</p>
+<p>热度数据：本周成交1,210套，环比下降10%，网签均价26,448元/㎡，环比下降2%；<br>
+贝壳看房人数：本周看房人数13,517，环比下降5%。</p>
+<p class="bsec">【回填说明】</p><p>本简报为历史周回填版：仅呈现数据底座已留存的周度指标（新房量价/来访认购/二手量价带看）；定性研判、典型竞品成交、项目开盘明细、竞企营销动作与政策口径未按周留存，暂不列示，待核补。</p>
+</div>
+
+<div class="grid">
+
+  <!-- 1 -->
+  <div class="card wide" data-tabs="policy">
+    <div class="card-head"><span class="no">1</span><h2>上周新政（7.20-7.26）</h2></div>
+    
+    <div class="ph" style="padding:26px 0">该周政策口径未按周留存（石墨表格「3-政策变化」快照仅覆盖当前周），待核补。</div>
+    
+  </div>
+
+  <!-- 土地分布地图 -->
+  <div class="card wide" data-ph="land" style="display:none">
+    <div class="card-head"><span class="no" style="background:#9aa0ad">地图</span><h2>土地分布地图（挂牌·成交）</h2></div>
+    <div id="landMapHint" style="font-size:12px;color:#9aa0ad;margin-bottom:8px"></div>
+    <div id="landSvgWrap" style="border-radius:8px;overflow:hidden;background:#eef1f5"></div>
+    <div id="landMap" style="height:460px;width:100%;border-radius:8px;overflow:hidden;background:#eef1f5;display:none"></div>
+    <div id="landMapLegend" style="margin-top:8px"></div>
+    <div class="foot">口径：杭八区·住宅/商住｜数据源：百度地图（打开即自动加载，失败自动回退离线示意）｜成交(红)/挂牌(蓝)点位；坐标来自浙江省自然资源网上交易中心官网（CGCS2000→BD-09）</div>
+  </div>
+
+  <!-- 土地挂牌 -->
+  <div class="card wide" data-ph="land" style="display:none">
+    <div class="card-head"><span class="no" style="background:#9aa0ad">挂牌</span><h2>当周土地挂牌（杭八区·住宅/商住）</h2></div>
+    <div class="ph" style="padding:18px;color:#3A7D44;font-size:13px;line-height:1.6">本周（2026.07.20-07.26）杭八区无住宅土地在报（宅地挂零）。</div>
+  </div>
+
+  <div class="card wide" data-ph="land" style="display:none">
+    <div class="card-head"><span class="no" style="background:#9aa0ad">2</span><h2>土地成交</h2></div>
+    <div class="verdict">本周（2026.07.20-07.26）成交 1 宗（历史回填：按成交确认时间归口；成交价/面积明细未按周留存，待核补）</div><div style="overflow-x:auto;margin-top:10px"><table style="width:100%;border-collapse:collapse;font-size:12px;color:#1f2937"><thead><tr style="background:#f5f7fa;color:#374151;font-weight:600"><th style="text-align:left">地块名称</th><th style="text-align:left">城市·区域</th><th style="text-align:left">成交日期</th><th style="text-align:left">土地用途</th></tr></thead><tbody style="border-top:2px solid #C8102E"><tr><td style="text-align:left">江海之城单元QT080603-92、102地块</td><td style="text-align:left">杭州·钱塘区</td><td style="text-align:left">2026-07-24</td><td style="text-align:left">普通商品住房用地（二类）</td></tr></tbody></table></div><div class="foot">口径：杭八区住宅用地｜数据源：浙江省自然资源网上交易中心 zjzrzyjy.com（CJ 阶段，历史回填）</div>
+  </div>
+
+  <!-- 4 -->
+  <div class="card wide" data-tabs="newhome">
+    <div class="card-head"><span class="no">4</span><h2>周度供应成交量价（杭八区·新房）</h2></div>
+    
+    <div class="verdict">本周供应6.4万方（环比▲120.7%）｜成交4.0万方（环比▲8.1%）｜成交均价40,167元/㎡（环比▼3.2%）</div>
+    <div class="metrics">
+      <span class="metric">供应 <b>6.4万方<small class="up">▲120.7%</small></b></span>
+      <span class="metric">成交 <b>4.0万方<small class="up">▲8.1%</small></b></span>
+      <span class="metric">均价 <b>40,167元/㎡<small class="down">▼3.2%</small></b></span>
+    </div>
+    <div class="legend"><span><i style="background:#1B5FA8"></i>供应（万方，左轴）</span><span><i style="background:#C8102E"></i>成交（万方，左轴）</span><span><i style="background:#D4870E"></i>成交均价（元/㎡，右轴）</span></div>
+    <svg viewBox="0 0 640 192" width="100%" style="display:block">
+  <line x1="62" y1="122.0" x2="578" y2="122.0" stroke="#e6e9ef" stroke-width="1"/><text x="54" y="125.5" fill="#6b7280" font-size="7" text-anchor="end">0万</text><text x="586" y="125.5" fill="#D4870E" font-size="7" text-anchor="start">0万</text><line x1="62" y1="86.0" x2="578" y2="86.0" stroke="#e6e9ef" stroke-width="1"/><text x="54" y="89.5" fill="#6b7280" font-size="7" text-anchor="end">7万</text><text x="586" y="89.5" fill="#D4870E" font-size="7" text-anchor="start">2万</text><line x1="62" y1="50.0" x2="578" y2="50.0" stroke="#e6e9ef" stroke-width="1"/><text x="54" y="53.5" fill="#6b7280" font-size="7" text-anchor="end">14万</text><text x="586" y="53.5" fill="#D4870E" font-size="7" text-anchor="start">4万</text><line x1="62" y1="14.0" x2="578" y2="14.0" stroke="#e6e9ef" stroke-width="1"/><text x="54" y="17.5" fill="#6b7280" font-size="7" text-anchor="end">21万</text><text x="586" y="17.5" fill="#D4870E" font-size="7" text-anchor="start">6万</text>
+  <rect x="75.0" y="86.0" width="7.0" height="36.0" rx="2" fill="#1B5FA8" opacity="0.9" data-tip="W1 5/4-5/10：供应 7 万方"/><rect x="118.0" y="75.2" width="7.0" height="46.8" rx="2" fill="#1B5FA8" opacity="0.9" data-tip="W2 5/11-5/17：供应 9.1 万方"/><rect x="161.0" y="69.5" width="7.0" height="52.5" rx="2" fill="#1B5FA8" opacity="0.9" data-tip="W3 5/18-5/24：供应 10.2 万方"/><rect x="204.0" y="69.0" width="7.0" height="53.0" rx="2" fill="#1B5FA8" opacity="0.9" data-tip="W4 5/25-5/31：供应 10.3 万方"/><rect x="247.0" y="94.7" width="7.0" height="27.3" rx="2" fill="#1B5FA8" opacity="0.9" data-tip="W5 6/1-6/7：供应 5.3 万方"/><rect x="290.0" y="43.3" width="7.0" height="78.7" rx="2" fill="#1B5FA8" opacity="0.9" data-tip="W6 6/8-6/14：供应 15.3 万方"/><rect x="333.0" y="63.9" width="7.0" height="58.1" rx="2" fill="#1B5FA8" opacity="0.9" data-tip="W7 6/15-6/21：供应 11.3 万方"/><rect x="376.0" y="68.5" width="7.0" height="53.5" rx="2" fill="#1B5FA8" opacity="0.9" data-tip="W8 6/22-6/28：供应 10.4 万方"/><rect x="419.0" y="113.8" width="7.0" height="8.2" rx="2" fill="#1B5FA8" opacity="0.9" data-tip="W9 6/29-7/5：供应 1.6 万方"/><rect x="462.0" y="101.4" width="7.0" height="20.6" rx="2" fill="#1B5FA8" opacity="0.9" data-tip="W10 7/6-7/12：供应 4 万方"/><rect x="505.0" y="107.1" width="7.0" height="14.9" rx="2" fill="#1B5FA8" opacity="0.9" data-tip="W11 7/13-7/19：供应 2.9 万方"/><rect x="548.0" y="89.1" width="7.0" height="32.9" rx="2" fill="#1B5FA8" opacity="0.9" data-tip="W12 7/20-7/26：供应 6.4 万方"/><rect x="85.0" y="65.9" width="7.0" height="56.1" rx="2" fill="#C8102E" opacity="0.9" data-tip="W1 5/4-5/10：成交 10.9 万方"/><rect x="128.0" y="58.7" width="7.0" height="63.3" rx="2" fill="#C8102E" opacity="0.9" data-tip="W2 5/11-5/17：成交 12.3 万方"/><rect x="171.0" y="71.1" width="7.0" height="50.9" rx="2" fill="#C8102E" opacity="0.9" data-tip="W3 5/18-5/24：成交 9.9 万方"/><rect x="214.0" y="81.9" width="7.0" height="40.1" rx="2" fill="#C8102E" opacity="0.9" data-tip="W4 5/25-5/31：成交 7.8 万方"/><rect x="257.0" y="61.8" width="7.0" height="60.2" rx="2" fill="#C8102E" opacity="0.9" data-tip="W5 6/1-6/7：成交 11.7 万方"/><rect x="300.0" y="71.6" width="7.0" height="50.4" rx="2" fill="#C8102E" opacity="0.9" data-tip="W6 6/8-6/14：成交 9.8 万方"/><rect x="343.0" y="82.4" width="7.0" height="39.6" rx="2" fill="#C8102E" opacity="0.9" data-tip="W7 6/15-6/21：成交 7.7 万方"/><rect x="386.0" y="52.6" width="7.0" height="69.4" rx="2" fill="#C8102E" opacity="0.9" data-tip="W8 6/22-6/28：成交 13.5 万方"/><rect x="429.0" y="74.7" width="7.0" height="47.3" rx="2" fill="#C8102E" opacity="0.9" data-tip="W9 6/29-7/5：成交 9.2 万方"/><rect x="472.0" y="93.2" width="7.0" height="28.8" rx="2" fill="#C8102E" opacity="0.9" data-tip="W10 7/6-7/12：成交 5.6 万方"/><rect x="515.0" y="103.0" width="7.0" height="19.0" rx="2" fill="#C8102E" opacity="0.9" data-tip="W11 7/13-7/19：成交 3.7 万方"/><rect x="558.0" y="101.4" width="7.0" height="20.6" rx="2" fill="#C8102E" opacity="0.9" data-tip="W12 7/20-7/26：成交 4 万方"/>
+  <path d="M83.5,27.0 L126.5,48.8 L169.5,23.7 L212.5,41.8 L255.5,27.1 L298.5,49.4 L341.5,46.6 L384.5,43.6 L427.5,42.5 L470.5,31.5 L513.5,47.3 L556.5,49.7" fill="none" stroke="#D4870E" stroke-width="2.4" /><circle cx="83.5" cy="27.0" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W1 5/4-5/10：均价 52784 元/㎡"/><circle cx="126.5" cy="48.8" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W2 5/11-5/17：均价 40683 元/㎡"/><circle cx="169.5" cy="23.7" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W3 5/18-5/24：均价 54622 元/㎡"/><circle cx="212.5" cy="41.8" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W4 5/25-5/31：均价 44541 元/㎡"/><circle cx="255.5" cy="27.1" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W5 6/1-6/7：均价 52704 元/㎡"/><circle cx="298.5" cy="49.4" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W6 6/8-6/14：均价 40321 元/㎡"/><circle cx="341.5" cy="46.6" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W7 6/15-6/21：均价 41879 元/㎡"/><circle cx="384.5" cy="43.6" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W8 6/22-6/28：均价 43547 元/㎡"/><circle cx="427.5" cy="42.5" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W9 6/29-7/5：均价 44182 元/㎡"/><circle cx="470.5" cy="31.5" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W10 7/6-7/12：均价 50285 元/㎡"/><circle cx="513.5" cy="47.3" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W11 7/13-7/19：均价 41499 元/㎡"/><circle cx="556.5" cy="49.7" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W12 7/20-7/26：均价 40167 元/㎡"/>
+  <text transform="rotate(-30 83.5 140)" x="83.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">5/4-5/10</text><text transform="rotate(-30 126.5 140)" x="126.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">5/11-5/17</text><text transform="rotate(-30 169.5 140)" x="169.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">5/18-5/24</text><text transform="rotate(-30 212.5 140)" x="212.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">5/25-5/31</text><text transform="rotate(-30 255.5 140)" x="255.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">6/1-6/7</text><text transform="rotate(-30 298.5 140)" x="298.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">6/8-6/14</text><text transform="rotate(-30 341.5 140)" x="341.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">6/15-6/21</text><text transform="rotate(-30 384.5 140)" x="384.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">6/22-6/28</text><text transform="rotate(-30 427.5 140)" x="427.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">6/29-7/5</text><text transform="rotate(-30 470.5 140)" x="470.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">7/6-7/12</text><text transform="rotate(-30 513.5 140)" x="513.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">7/13-7/19</text><text transform="rotate(-30 556.5 140)" x="556.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">7/20-7/26</text>
+</svg>
+    <div class="note">本周新房供应6.4万方，环比▲120.7%；成交4.0万方，环比▲8.1%；成交均价40,167元/㎡，环比▼3.2%。</div>
+    <div class="foot">口径：杭八区商品住宅｜数据源：石墨表格「4-周度成交量价」（历史回填）｜截止2026.07.20-07.26</div>
+    
+  </div>
+
+  <!-- 3 -->
+  <div class="card wide" data-tabs="newhome">
+    <div class="card-head"><span class="no">5</span><h2>周度显性库存及去化周期</h2></div>
+    
+    <div class="verdict">本周显性库存250万方（环比▲1.2%）｜去化周期9.2个月</div>
+    <div class="metrics">
+      <span class="metric">显性库存 <b>250万方<small class="up">▲1.2%</small></b></span>
+      <span class="metric">去化周期 <b>9.2个月<small>表内值</small></b></span>
+    </div>
+    <svg viewBox="0 0 640 192" width="100%" style="display:block">
+  <line x1="62" y1="122.0" x2="578" y2="122.0" stroke="#e6e9ef" stroke-width="1"/><text x="54" y="125.5" fill="#6b7280" font-size="7" text-anchor="end">0万方</text><line x1="62" y1="86.0" x2="578" y2="86.0" stroke="#e6e9ef" stroke-width="1"/><text x="54" y="89.5" fill="#6b7280" font-size="7" text-anchor="end">100万方</text><line x1="62" y1="50.0" x2="578" y2="50.0" stroke="#e6e9ef" stroke-width="1"/><text x="54" y="53.5" fill="#6b7280" font-size="7" text-anchor="end">200万方</text><line x1="62" y1="14.0" x2="578" y2="14.0" stroke="#e6e9ef" stroke-width="1"/><text x="54" y="17.5" fill="#6b7280" font-size="7" text-anchor="end">300万方</text>
+  <path d="M83.5,29.1 L126.5,30.6 L169.5,30.2 L212.5,29.5 L255.5,31.6 L298.5,29.5 L341.5,28.0 L384.5,29.8 L427.5,31.6 L470.5,32.4 L513.5,33.1 L556.5,32.0 L556.5,122.0 L83.5,122.0 Z" fill="#1B5FA8" opacity="0.10"/>
+  <path d="M83.5,29.1 L126.5,30.6 L169.5,30.2 L212.5,29.5 L255.5,31.6 L298.5,29.5 L341.5,28.0 L384.5,29.8 L427.5,31.6 L470.5,32.4 L513.5,33.1 L556.5,32.0" fill="none" stroke="#1B5FA8" stroke-width="2.4"/><circle cx="83.5" cy="29.1" r="3.2" fill="#1B5FA8" stroke="#fff" stroke-width="1" data-tip="W1 5/4-5/10：258"/><circle cx="126.5" cy="30.6" r="3.2" fill="#1B5FA8" stroke="#fff" stroke-width="1" data-tip="W2 5/11-5/17：254"/><circle cx="169.5" cy="30.2" r="3.2" fill="#1B5FA8" stroke="#fff" stroke-width="1" data-tip="W3 5/18-5/24：255"/><circle cx="212.5" cy="29.5" r="3.2" fill="#1B5FA8" stroke="#fff" stroke-width="1" data-tip="W4 5/25-5/31：257"/><circle cx="255.5" cy="31.6" r="3.2" fill="#1B5FA8" stroke="#fff" stroke-width="1" data-tip="W5 6/1-6/7：251"/><circle cx="298.5" cy="29.5" r="3.2" fill="#1B5FA8" stroke="#fff" stroke-width="1" data-tip="W6 6/8-6/14：257"/><circle cx="341.5" cy="28.0" r="3.2" fill="#1B5FA8" stroke="#fff" stroke-width="1" data-tip="W7 6/15-6/21：261"/><circle cx="384.5" cy="29.8" r="3.2" fill="#1B5FA8" stroke="#fff" stroke-width="1" data-tip="W8 6/22-6/28：256"/><circle cx="427.5" cy="31.6" r="3.2" fill="#1B5FA8" stroke="#fff" stroke-width="1" data-tip="W9 6/29-7/5：251"/><circle cx="470.5" cy="32.4" r="3.2" fill="#1B5FA8" stroke="#fff" stroke-width="1" data-tip="W10 7/6-7/12：249"/><circle cx="513.5" cy="33.1" r="3.2" fill="#1B5FA8" stroke="#fff" stroke-width="1" data-tip="W11 7/13-7/19：247"/><circle cx="556.5" cy="32.0" r="3.2" fill="#1B5FA8" stroke="#fff" stroke-width="1" data-tip="W12 7/20-7/26：250"/>
+  <text transform="rotate(-30 83.5 140)" x="83.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">5/4-5/10</text><text transform="rotate(-30 126.5 140)" x="126.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">5/11-5/17</text><text transform="rotate(-30 169.5 140)" x="169.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">5/18-5/24</text><text transform="rotate(-30 212.5 140)" x="212.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">5/25-5/31</text><text transform="rotate(-30 255.5 140)" x="255.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">6/1-6/7</text><text transform="rotate(-30 298.5 140)" x="298.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">6/8-6/14</text><text transform="rotate(-30 341.5 140)" x="341.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">6/15-6/21</text><text transform="rotate(-30 384.5 140)" x="384.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">6/22-6/28</text><text transform="rotate(-30 427.5 140)" x="427.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">6/29-7/5</text><text transform="rotate(-30 470.5 140)" x="470.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">7/6-7/12</text><text transform="rotate(-30 513.5 140)" x="513.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">7/13-7/19</text><text transform="rotate(-30 556.5 140)" x="556.5" y="140" fill="#6b7280" font-size="6.5" text-anchor="end">7/20-7/26</text>
+</svg>
+    <div class="note">本周显性库存250万方，环比▲1.2%；去化周期9.2个月（石墨表内值）。定性研判未按周留存，仅列可核数据。</div>
+    <div class="foot">口径：杭八区｜数据源：石墨表格「4-周度成交量价」（历史回填）｜去化周期为推算值</div>
+    
+  </div>
+
+  <!-- 4 -->
+  <div class="card" data-tabs="xs">
+    <div class="card-head"><span class="no">6</span><h2>周度来访认购及归因（20个监测竞品）</h2></div>
+    
+    <div class="verdict">来访1,978组（环比▼1.0%）｜认购60套（环比▼6.3%）｜转化率3.0%</div>
+    <div class="metrics">
+      <span class="metric">来访 <b>1,978组<small class="down">▼1.0%</small></b></span>
+      <span class="metric">认购 <b>60套<small class="down">▼6.3%</small></b></span>
+      <span class="metric">转化率 <b>3.0%<small>上周3.2%</small></b></span>
+    </div>
+    <div class="legend"><span><i style="background:#1B5FA8"></i>来访（组，左轴）</span><span><i style="background:#D4870E"></i>认购（套，右轴）</span></div>
+    <svg viewBox="0 0 640 244" width="100%" style="display:block">
+  <line x1="62" y1="174.0" x2="578" y2="174.0" stroke="#e6e9ef" stroke-width="1"/><text x="54" y="177.5" fill="#6b7280" font-size="10.5" text-anchor="end">0</text><text x="586" y="177.5" fill="#D4870E" font-size="10.5" text-anchor="start">0</text><line x1="62" y1="120.7" x2="578" y2="120.7" stroke="#e6e9ef" stroke-width="1"/><text x="54" y="124.2" fill="#6b7280" font-size="10.5" text-anchor="end">1,000</text><text x="586" y="124.2" fill="#D4870E" font-size="10.5" text-anchor="start">50</text><line x1="62" y1="67.3" x2="578" y2="67.3" stroke="#e6e9ef" stroke-width="1"/><text x="54" y="70.8" fill="#6b7280" font-size="10.5" text-anchor="end">2,000</text><text x="586" y="70.8" fill="#D4870E" font-size="10.5" text-anchor="start">100</text><line x1="62" y1="14.0" x2="578" y2="14.0" stroke="#e6e9ef" stroke-width="1"/><text x="54" y="17.5" fill="#6b7280" font-size="10.5" text-anchor="end">3,000</text><text x="586" y="17.5" fill="#D4870E" font-size="10.5" text-anchor="start">150</text>
+  <rect x="68.0" y="39.0" width="91.2" height="135.0" rx="2" fill="#1B5FA8" opacity="0.9" data-tip="W1 6/22-6/28：来访 2531 组"/><rect x="171.2" y="66.2" width="91.2" height="107.8" rx="2" fill="#1B5FA8" opacity="0.9" data-tip="W2 6/29-7/5：来访 2022 组"/><rect x="274.4" y="85.4" width="91.2" height="88.6" rx="2" fill="#1B5FA8" opacity="0.9" data-tip="W3 7/6-7/12：来访 1661 组"/><rect x="377.6" y="67.5" width="91.2" height="106.5" rx="2" fill="#1B5FA8" opacity="0.9" data-tip="W4 7/13-7/19：来访 1997 组"/><rect x="480.8" y="68.5" width="91.2" height="105.5" rx="2" fill="#1B5FA8" opacity="0.9" data-tip="W5 7/20-7/26：来访 1978 组"/>
+  <path d="M113.6,41.7 L216.8,91.9 L320.0,124.9 L423.2,105.7 L526.4,110.0" fill="none" stroke="#D4870E" stroke-width="2.4" /><circle cx="113.6" cy="41.7" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W1 6/22-6/28：认购 124 套"/><circle cx="216.8" cy="91.9" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W2 6/29-7/5：认购 77 套"/><circle cx="320.0" cy="124.9" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W3 7/6-7/12：认购 46 套"/><circle cx="423.2" cy="105.7" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W4 7/13-7/19：认购 64 套"/><circle cx="526.4" cy="110.0" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W5 7/20-7/26：认购 60 套"/>
+  <text transform="rotate(-30 113.6 192)" x="113.6" y="192" fill="#6b7280" font-size="10" text-anchor="end">6/22-6/28</text><text transform="rotate(-30 216.8 192)" x="216.8" y="192" fill="#6b7280" font-size="10" text-anchor="end">6/29-7/5</text><text transform="rotate(-30 320.0 192)" x="320.0" y="192" fill="#6b7280" font-size="10" text-anchor="end">7/6-7/12</text><text transform="rotate(-30 423.2 192)" x="423.2" y="192" fill="#6b7280" font-size="10" text-anchor="end">7/13-7/19</text><text transform="rotate(-30 526.4 192)" x="526.4" y="192" fill="#6b7280" font-size="10" text-anchor="end">7/20-7/26</text>
+</svg>
+    <div class="note">本周来访1,978组，环比▼1.0%；认购60套，环比▼6.3%；转化率3.0%。剔除加推口径：剔除加推项目（杭序府、星缦和润、知海棠）影响后，平均来访111组，环比下降7%，平均认购4.2套，环比下降21%；本周因单休影响，来访认购自然回落</div>
+    
+  </div>
+
+  <!-- 5 -->
+  <div class="card" data-tabs="xs">
+    <div class="card-head"><span class="no">7</span><h2>竞品/典型项目价格与加码异动</h2></div>
+    
+    <div class="ph" style="padding:26px 0">该周异动记录未按周留存，待核补。</div>
+    
+  </div>
+
+  <!-- 6 -->
+  <div class="card wide" data-tabs="open">
+    <div class="card-head"><span class="no">8</span><h2>上周开盘去化详情</h2></div>
+    
+    <div class="ph" style="padding:26px 0">该周开盘明细口径未按周留存，待核补。</div>
+    
+  </div>
+
+  <!-- 7 -->
+  <div class="card" data-tabs="esf">
+    <div class="card-head"><span class="no">9</span><h2>二手房带看量变化</h2></div>
+    
+    <div class="verdict">本周全市带看13,517次（环比▼5.0%）</div>
+    <div class="metrics">
+      <span class="metric">全市带看 <b>13,517次<small class="down">▼5.0%</small></b></span>
+      <span class="metric">申花 <b>2,212次</b></span>
+      <span class="metric">市北 <b>2,701次</b></span>
+    </div>
+    <svg viewBox="0 0 640 244" width="100%" style="display:block">
+  <line x1="62" y1="174.0" x2="578" y2="174.0" stroke="#e6e9ef" stroke-width="1"/><text x="54" y="177.5" fill="#6b7280" font-size="10.5" text-anchor="end">0.0万次</text><line x1="62" y1="120.7" x2="578" y2="120.7" stroke="#e6e9ef" stroke-width="1"/><text x="54" y="124.2" fill="#6b7280" font-size="10.5" text-anchor="end">0.8万次</text><line x1="62" y1="67.3" x2="578" y2="67.3" stroke="#e6e9ef" stroke-width="1"/><text x="54" y="70.8" fill="#6b7280" font-size="10.5" text-anchor="end">1.6万次</text><line x1="62" y1="14.0" x2="578" y2="14.0" stroke="#e6e9ef" stroke-width="1"/><text x="54" y="17.5" fill="#6b7280" font-size="10.5" text-anchor="end">2.4万次</text>
+  <path d="M83.5,43.7 L126.5,54.0 L169.5,69.7 L212.5,57.3 L255.5,62.1 L298.5,66.9 L341.5,85.7 L384.5,72.3 L427.5,79.7 L470.5,103.7 L513.5,79.2 L556.5,83.9 L556.5,174.0 L83.5,174.0 Z" fill="#3A7D44" opacity="0.10"/>
+  <path d="M83.5,43.7 L126.5,54.0 L169.5,69.7 L212.5,57.3 L255.5,62.1 L298.5,66.9 L341.5,85.7 L384.5,72.3 L427.5,79.7 L470.5,103.7 L513.5,79.2 L556.5,83.9" fill="none" stroke="#3A7D44" stroke-width="2.4"/><circle cx="83.5" cy="43.7" r="3.2" fill="#3A7D44" stroke="#fff" stroke-width="1" data-tip="W1 5/4-5/10：19,551"/><circle cx="126.5" cy="54.0" r="3.2" fill="#3A7D44" stroke="#fff" stroke-width="1" data-tip="W2 5/11-5/17：17,995"/><circle cx="169.5" cy="69.7" r="3.2" fill="#3A7D44" stroke="#fff" stroke-width="1" data-tip="W3 5/18-5/24：15,649"/><circle cx="212.5" cy="57.3" r="3.2" fill="#3A7D44" stroke="#fff" stroke-width="1" data-tip="W4 5/25-5/31：17,510"/><circle cx="255.5" cy="62.1" r="3.2" fill="#3A7D44" stroke="#fff" stroke-width="1" data-tip="W5 6/1-6/7：16,780"/><circle cx="298.5" cy="66.9" r="3.2" fill="#3A7D44" stroke="#fff" stroke-width="1" data-tip="W6 6/8-6/14：16,061"/><circle cx="341.5" cy="85.7" r="3.2" fill="#3A7D44" stroke="#fff" stroke-width="1" data-tip="W7 6/15-6/21：13,252"/><circle cx="384.5" cy="72.3" r="3.2" fill="#3A7D44" stroke="#fff" stroke-width="1" data-tip="W8 6/22-6/28：15,262"/><circle cx="427.5" cy="79.7" r="3.2" fill="#3A7D44" stroke="#fff" stroke-width="1" data-tip="W9 6/29-7/5：14,151"/><circle cx="470.5" cy="103.7" r="3.2" fill="#3A7D44" stroke="#fff" stroke-width="1" data-tip="W10 7/6-7/12：10,551"/><circle cx="513.5" cy="79.2" r="3.2" fill="#3A7D44" stroke="#fff" stroke-width="1" data-tip="W11 7/13-7/19：14,223"/><circle cx="556.5" cy="83.9" r="3.2" fill="#3A7D44" stroke="#fff" stroke-width="1" data-tip="W12 7/20-7/26：13,517"/>
+  <text transform="rotate(-30 83.5 192)" x="83.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">5/4-5/10</text><text transform="rotate(-30 126.5 192)" x="126.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">5/11-5/17</text><text transform="rotate(-30 169.5 192)" x="169.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">5/18-5/24</text><text transform="rotate(-30 212.5 192)" x="212.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">5/25-5/31</text><text transform="rotate(-30 255.5 192)" x="255.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">6/1-6/7</text><text transform="rotate(-30 298.5 192)" x="298.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">6/8-6/14</text><text transform="rotate(-30 341.5 192)" x="341.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">6/15-6/21</text><text transform="rotate(-30 384.5 192)" x="384.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">6/22-6/28</text><text transform="rotate(-30 427.5 192)" x="427.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">6/29-7/5</text><text transform="rotate(-30 470.5 192)" x="470.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">7/6-7/12</text><text transform="rotate(-30 513.5 192)" x="513.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">7/13-7/19</text><text transform="rotate(-30 556.5 192)" x="556.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">7/20-7/26</text>
+</svg>
+    <div class="note">本周全市带看13,517次，环比▼5.0%；申花2,212次、市北2,701次（周度监测口径）。</div>
+    <div class="foot">口径：杭州全市·贝壳小程序看房人数（历史回填）｜数据源：石墨表格「10-二手房带看量」｜截止07.20-72.6</div>
+    
+  </div>
+
+  <!-- 8 -->
+  <div class="card" data-tabs="esf">
+    <div class="card-head"><span class="no">10</span><h2>二手房周度成交量、成交均价（杭八区）</h2></div>
+    
+    <div class="verdict">本周二手成交1,210套（环比▼9.6%）｜网签均价26,448元/㎡（环比▼2.1%）</div>
+    <div class="metrics">
+      <span class="metric">成交套数(全口径) <b>1,210套<small class="down">▼9.6%</small></b></span>
+      <span class="metric">网签均价 <b>26,448元/㎡<small class="down">▼2.1%</small></b></span>
+    </div>
+    <div class="legend"><span><i style="background:#C8102E"></i>成交套数·全口径（套，左轴）</span><span><i style="background:#D4870E"></i>网签均价（元/㎡，右轴）</span></div>
+    <svg viewBox="0 0 640 244" width="100%" style="display:block">
+  <line x1="62" y1="174.0" x2="578" y2="174.0" stroke="#e6e9ef" stroke-width="1"/><text x="54" y="177.5" fill="#6b7280" font-size="10.5" text-anchor="end">0</text><text x="586" y="177.5" fill="#D4870E" font-size="10.5" text-anchor="start">0万</text><line x1="62" y1="120.7" x2="578" y2="120.7" stroke="#e6e9ef" stroke-width="1"/><text x="54" y="124.2" fill="#6b7280" font-size="10.5" text-anchor="end">800</text><text x="586" y="124.2" fill="#D4870E" font-size="10.5" text-anchor="start">1万</text><line x1="62" y1="67.3" x2="578" y2="67.3" stroke="#e6e9ef" stroke-width="1"/><text x="54" y="70.8" fill="#6b7280" font-size="10.5" text-anchor="end">1600</text><text x="586" y="70.8" fill="#D4870E" font-size="10.5" text-anchor="start">2万</text><line x1="62" y1="14.0" x2="578" y2="14.0" stroke="#e6e9ef" stroke-width="1"/><text x="54" y="17.5" fill="#6b7280" font-size="10.5" text-anchor="end">2400</text><text x="586" y="17.5" fill="#D4870E" font-size="10.5" text-anchor="start">3万</text>
+  <rect x="76.5" y="61.4" width="14.0" height="112.6" rx="2" fill="#C8102E" opacity="0.9" data-tip="W1 5/4-5/10：成交 1689 套"/><rect x="119.5" y="54.7" width="14.0" height="119.3" rx="2" fill="#C8102E" opacity="0.9" data-tip="W2 5/11-5/17：成交 1790 套"/><rect x="162.5" y="54.9" width="14.0" height="119.1" rx="2" fill="#C8102E" opacity="0.9" data-tip="W3 5/18-5/24：成交 1787 套"/><rect x="205.5" y="59.3" width="14.0" height="114.7" rx="2" fill="#C8102E" opacity="0.9" data-tip="W4 5/25-5/31：成交 1720 套"/><rect x="248.5" y="74.0" width="14.0" height="100.0" rx="2" fill="#C8102E" opacity="0.9" data-tip="W5 6/1-6/7：成交 1500 套"/><rect x="291.5" y="76.0" width="14.0" height="98.0" rx="2" fill="#C8102E" opacity="0.9" data-tip="W6 6/8-6/14：成交 1470 套"/><rect x="334.5" y="101.9" width="14.0" height="72.1" rx="2" fill="#C8102E" opacity="0.9" data-tip="W7 6/15-6/21：成交 1081 套"/><rect x="377.5" y="72.9" width="14.0" height="101.1" rx="2" fill="#C8102E" opacity="0.9" data-tip="W8 6/22-6/28：成交 1517 套"/><rect x="420.5" y="83.3" width="14.0" height="90.7" rx="2" fill="#C8102E" opacity="0.9" data-tip="W9 6/29-7/5：成交 1360 套"/><rect x="463.5" y="98.1" width="14.0" height="75.9" rx="2" fill="#C8102E" opacity="0.9" data-tip="W10 7/6-7/12：成交 1138 套"/><rect x="506.5" y="84.8" width="14.0" height="89.2" rx="2" fill="#C8102E" opacity="0.9" data-tip="W11 7/13-7/19：成交 1338 套"/><rect x="549.5" y="93.3" width="14.0" height="80.7" rx="2" fill="#C8102E" opacity="0.9" data-tip="W12 7/20-7/26：成交 1210 套"/>
+  <path d="M83.5,33.5 L126.5,36.0 L169.5,33.5 L212.5,28.5 L255.5,35.8 L298.5,34.3 L341.5,23.1 L384.5,35.9 L427.5,30.8 L470.5,27.7 L513.5,30.0 L556.5,32.9" fill="none" stroke="#D4870E" stroke-width="2.4" /><circle cx="83.5" cy="33.5" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W1 5/4-5/10：网签均价 26335 元/㎡"/><circle cx="126.5" cy="36.0" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W2 5/11-5/17：网签均价 25869 元/㎡"/><circle cx="169.5" cy="33.5" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W3 5/18-5/24：网签均价 26338 元/㎡"/><circle cx="212.5" cy="28.5" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W4 5/25-5/31：网签均价 27281 元/㎡"/><circle cx="255.5" cy="35.8" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W5 6/1-6/7：网签均价 25904 元/㎡"/><circle cx="298.5" cy="34.3" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W6 6/8-6/14：网签均价 26199 元/㎡"/><circle cx="341.5" cy="23.1" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W7 6/15-6/21：网签均价 28292 元/㎡"/><circle cx="384.5" cy="35.9" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W8 6/22-6/28：网签均价 25895 元/㎡"/><circle cx="427.5" cy="30.8" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W9 6/29-7/5：网签均价 26845 元/㎡"/><circle cx="470.5" cy="27.7" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W10 7/6-7/12：网签均价 27436 元/㎡"/><circle cx="513.5" cy="30.0" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W11 7/13-7/19：网签均价 27008 元/㎡"/><circle cx="556.5" cy="32.9" r="3.2" fill="#D4870E" stroke="#fff" stroke-width="1" data-tip="W12 7/20-7/26：网签均价 26448 元/㎡"/>
+  <text transform="rotate(-30 83.5 192)" x="83.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">5/4-5/10</text><text transform="rotate(-30 126.5 192)" x="126.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">5/11-5/17</text><text transform="rotate(-30 169.5 192)" x="169.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">5/18-5/24</text><text transform="rotate(-30 212.5 192)" x="212.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">5/25-5/31</text><text transform="rotate(-30 255.5 192)" x="255.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">6/1-6/7</text><text transform="rotate(-30 298.5 192)" x="298.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">6/8-6/14</text><text transform="rotate(-30 341.5 192)" x="341.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">6/15-6/21</text><text transform="rotate(-30 384.5 192)" x="384.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">6/22-6/28</text><text transform="rotate(-30 427.5 192)" x="427.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">6/29-7/5</text><text transform="rotate(-30 470.5 192)" x="470.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">7/6-7/12</text><text transform="rotate(-30 513.5 192)" x="513.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">7/13-7/19</text><text transform="rotate(-30 556.5 192)" x="556.5" y="192" fill="#6b7280" font-size="10" text-anchor="end">7/20-7/26</text>
+</svg>
+    <div class="note">本周二手房成交1,210套，环比▼9.6%；网签均价26,448元/㎡，环比▼2.1%。定性研判未按周留存，仅列可核数据。</div>
+    <div class="foot">口径：杭八区·二手房｜数据源：袋鼠汇 collectdatastatistics（历史回填）｜截止07.20-72.6</div>
+    
+  </div>
+
+  <div class="card wide" data-ph="plan" style="display:none">
+    <div class="card-head"><span class="no" style="background:#9aa0ad">3</span><h2>规划公示 · 建设项目批前公示（住宅）</h2></div>
+    <div class="ph">历史周公示快照未留存（当前抓取覆盖 9.18-9.20 公示批次），待补。</div>
+  </div>
+  <div class="card wide" data-ph="monitor" style="display:none;margin-bottom:16px"><div class="card-head"><span class="no" style="background:#9aa0ad">1</span><h2>竞品分析｜元起观潮府项目</h2></div><div style="font-size:13px;line-height:2;color:#1f2937;margin-bottom:6px"><div>➤ 本周元起4个竞品项目，总来访47组，认购0套。</div><div>➤ 竞品动作：本周各竞品优惠折扣无变化</div></div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;color:#1f2937"><thead><tr style="background:#e8eef5;color:#1f2937;font-weight:700"><th rowspan="2" style="border:1px solid #c9d4e0;padding:6px 10px">项目</th><th colspan="2" style="border:1px solid #c9d4e0;padding:5px 8px">6.29-7.5</th><th colspan="2" style="border:1px solid #c9d4e0;padding:5px 8px">7.6-7.12</th><th colspan="2" style="border:1px solid #c9d4e0;padding:5px 8px">7.13-7.19</th><th colspan="2" style="border:1px solid #c9d4e0;padding:5px 8px">7.20-7.26</th><th rowspan="2" style="border:1px solid #c9d4e0;padding:6px 10px;width:220px">优惠折扣</th></tr><tr style="background:#e8eef5;color:#1f2937;font-weight:600"><th style="border:1px solid #c9d4e0;padding:3px 8px">来访</th><th style="border:1px solid #c9d4e0;padding:3px 8px">认购</th><th style="border:1px solid #c9d4e0;padding:3px 8px">来访</th><th style="border:1px solid #c9d4e0;padding:3px 8px">认购</th><th style="border:1px solid #c9d4e0;padding:3px 8px">来访</th><th style="border:1px solid #c9d4e0;padding:3px 8px">认购</th><th style="border:1px solid #c9d4e0;padding:3px 8px">来访</th><th style="border:1px solid #c9d4e0;padding:3px 8px">认购</th></tr></thead><tbody><tr><td style="border:1px solid #dfe6ee;padding:5px 10px;font-weight:700;white-space:nowrap">大家·咏印明庐</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">12</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">0</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">10</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">1</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">17</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">0</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">19</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">0</td><td style="border:1px solid #dfe6ee;padding:5px 8px;font-size:11px;line-height:1.6;word-break:break-all;color:#3a4150">折扣：优惠约60-100万/套(优惠力度增加)<br>渠道：清盘行动冲刺全民35万/套，分销50万/套（原20万/套）</td></tr><tr><td style="border:1px solid #dfe6ee;padding:5px 10px;font-weight:700;white-space:nowrap">翠隐江粼</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">7</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">1</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">7</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">0</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">15</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">1</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">16</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">0</td><td style="border:1px solid #dfe6ee;padding:5px 8px;font-size:11px;line-height:1.6;word-break:break-all;color:#3a4150">折扣：优惠约7%；<br>渠道：全民5-10万/套，分销7.5-12.5万</td></tr><tr><td style="border:1px solid #dfe6ee;padding:5px 10px;font-weight:700;white-space:nowrap">蕙澜月华</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">25</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">2</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">16</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">1</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">15</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">0</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">12</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">0</td><td style="border:1px solid #dfe6ee;padding:5px 8px;font-size:11px;line-height:1.6;word-break:break-all;color:#3a4150">折扣：房价95折，送车位一个(50万)<br>渠道：全民12-15万/套</td></tr></tbody></table></div></div>
+<div class="card wide" data-ph="monitor" style="display:none;margin-bottom:16px"><div class="card-head"><span class="no" style="background:#9aa0ad">2</span><h2>竞品分析｜润启未来之城项目</h2></div><div style="font-size:13px;line-height:2;color:#1f2937;margin-bottom:6px"><div>➤ 本周润启5个竞品项目，总来访743组，认购18套。<span style="color:#6b7280">建发元序来访环比▲217.0%，为本周主要拉动项。</span></div><div>➤ 竞品动作：本周各竞品优惠折扣无变化</div></div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;color:#1f2937"><thead><tr style="background:#e8eef5;color:#1f2937;font-weight:700"><th rowspan="2" style="border:1px solid #c9d4e0;padding:6px 10px">项目</th><th colspan="2" style="border:1px solid #c9d4e0;padding:5px 8px">6.29-7.5</th><th colspan="2" style="border:1px solid #c9d4e0;padding:5px 8px">7.6-7.12</th><th colspan="2" style="border:1px solid #c9d4e0;padding:5px 8px">7.13-7.19</th><th colspan="2" style="border:1px solid #c9d4e0;padding:5px 8px">7.20-7.26</th><th rowspan="2" style="border:1px solid #c9d4e0;padding:6px 10px;width:220px">优惠折扣</th></tr><tr style="background:#e8eef5;color:#1f2937;font-weight:600"><th style="border:1px solid #c9d4e0;padding:3px 8px">来访</th><th style="border:1px solid #c9d4e0;padding:3px 8px">认购</th><th style="border:1px solid #c9d4e0;padding:3px 8px">来访</th><th style="border:1px solid #c9d4e0;padding:3px 8px">认购</th><th style="border:1px solid #c9d4e0;padding:3px 8px">来访</th><th style="border:1px solid #c9d4e0;padding:3px 8px">认购</th><th style="border:1px solid #c9d4e0;padding:3px 8px">来访</th><th style="border:1px solid #c9d4e0;padding:3px 8px">认购</th></tr></thead><tbody><tr><td style="border:1px solid #dfe6ee;padding:5px 10px;font-weight:700;white-space:nowrap">西源赋高层</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">80</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">0</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">40</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">1</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">55</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">1</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">100</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">3</td><td style="border:1px solid #dfe6ee;padding:5px 8px;font-size:11px;line-height:1.6;word-break:break-all;color:#3a4150">折扣：高层94-97折<br>渠道：高层分销佣金6-10万/套，全民佣金7万/套，老带新老业主佣金10万/套(税前)</td></tr><tr><td style="border:1px solid #dfe6ee;padding:5px 10px;font-weight:700;white-space:nowrap">保利天奕</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">230</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">8</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">120</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">6</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">230</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">9</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">200</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">8</td><td style="border:1px solid #dfe6ee;padding:5px 8px;font-size:11px;line-height:1.6;word-break:break-all;color:#3a4150">折扣：无折扣，可赠送一个车位<br>渠道：分销佣金3.3万/套；全民&amp;老带新1.84万/套</td></tr><tr><td style="border:1px solid #dfe6ee;padding:5px 10px;font-weight:700;white-space:nowrap">咏舟府</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">77</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">0</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">45</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">0</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">110</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">2</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">88</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">1</td><td style="border:1px solid #dfe6ee;padding:5px 8px;font-size:11px;line-height:1.6;word-break:break-all;color:#3a4150">折扣：网签最低92折，主力93折（原主力网签94折）<br>渠道：6万元/套+成交奖励5000元/套（原分销4-6.4万/套）</td></tr><tr><td style="border:1px solid #dfe6ee;padding:5px 10px;font-weight:700;white-space:nowrap">建发元序</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">258</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">5</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">110</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">3</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">112</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">3</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">355</td><td style="border:1px solid #dfe6ee;text-align:center;padding:4px 6px">6</td><td style="border:1px solid #dfe6ee;padding:5px 8px;font-size:11px;line-height:1.6;word-break:break-all;color:#3a4150">折扣：优惠5-10万<br>渠道：老带新3万积分可换价值约2万5金条</td></tr></tbody></table></div></div>
+
+</div>
+
+</main>
+</div>
+
+<script>
+const TL_WEEKS = /*WEEKS*/[{"k":"20260622-0628","label":"06.22-06.28"},{"k":"20260629-0705","label":"06.29-07.05"},{"k":"20260706-0712","label":"07.06-07.12"},{"k":"20260713-0719","label":"07.13-07.19"},{"k":"20260720-0726","label":"07.20-07.26"},{"k":"20260727-0802","label":"07.27-08.02"},{"k":"20260803-0809","label":"08.03-08.09"},{"k":"20260810-0816","label":"08.10-08.16"},{"k":"20260817-0823","label":"08.17-08.23"},{"k":"20260824-0830","label":"08.24-08.30"},{"k":"20260831-0906","label":"08.31-09.06"},{"k":"20260907-0913","label":"09.07-09.13"},{"k":"20260914-0920","label":"09.14-09.20"}];
+const TL_EXISTING = /*EXISTING*/["20260622-0628","20260629-0705","20260706-0712","20260713-0719","20260720-0726","20260727-0802","20260803-0809","20260810-0816","20260817-0823","20260824-0830","20260831-0906","20260907-0913","20260914-0920"];
+const TL_CURRENT = /*CURRENT*/"20260720-0726";
+const TL_FILE_DIR_URL = /*FILEDIR*/"file:///D:/%E7%BD%AE%E5%9C%B0workbuddy/%E5%B7%A5%E4%BD%9C%E5%8C%BA/2026-09-15-15-41-17";
+window.INITIAL_OVERRIDES = /*INITIAL_OV*/{};
+const LAND_GEO = /*GEO*/[{"name":"乔司单元LP020303-05-1地块（B18-1）","status":"成交","lng":120.3,"lat":30.42,"region":"临平区·乔司翁梅"},{"name":"良渚东单元YH030405-05地块","status":"成交","lng":120.13,"lat":30.38,"region":"余杭区·北部新城"},{"name":"江南科技城西单元XS030201-26、27地块","status":"成交","lng":120.42,"lat":30.18,"region":"萧山区·萧山科技城"},{"name":"未来科技城单元YH090102-09地块","status":"成交","lng":120.02,"lat":30.28,"region":"余杭区·未来科技城"},{"name":"未来科技城单元YH090102-01、02地块","status":"成交","lng":120.03,"lat":30.29,"region":"余杭区·未来科技城"},{"name":"长睦单元JG0203-03地块","status":"成交","lng":120.2,"lat":30.34,"region":"上城区·长睦"},{"name":"康桥单元GS120103-10地块","status":"成交","lng":120.15,"lat":30.33,"region":"拱墅区·运河新城"},{"name":"元成单元QT040101-02地块","status":"成交","lng":120.5,"lat":30.31,"region":"钱塘区·大学城北"}];
+const LAND_MAP_POINTS = /*PTS*/[{"name":"江海之城单元QT080603-92、102地块","status":"成交","region":"杭州·钱塘区","lng":120.499415,"lat":30.29759,"usage":"普通商品住房用地（二类）","date":"2026-07-24"}];
+(function(){
+  // 初始即隐藏各归集卡片：总览仅显示文字简报
+  document.querySelectorAll('[data-tabs]').forEach(c => { c.style.display = 'none'; });
+  const list = document.getElementById('tlList');
+  list.innerHTML = TL_WEEKS.map(function(w){
+    const has = TL_EXISTING.includes(w.k), cur = w.k === TL_CURRENT;
+    return '<div class="tl-item ' + (cur ? 'cur' : has ? 'has' : 'off') + '"' + (has && !cur ? ' data-k="' + w.k + '"' : '') + '>' +
+      '<span class="dot"></span><span class="tl-label">' + w.label + '</span>' +
+      (cur ? '<span class="tl-tag">本周</span>' : has ? '<span class="tl-tag open">可回看</span>' : '<span class="tl-na">未生成</span>') + '</div>';
+  }).join('');
+  function tlOpen(k){
+    if(!k) return;
+    const name = '杭州市场周报看板_' + k + '.html';
+    const base = (location.href||'').split('#')[0];
+    const dir = base.lastIndexOf('/')>=0 ? base.substring(0, base.lastIndexOf('/')+1) : '';
+    const rel = dir + name; // 同源相对路径：本地 HTTP 服务 / file:// 直接打开均生效
+    // 预览面板 webview 内 location.href 同源跳转最可靠；file:// 作为直接打开的兜底
+    try { location.href = rel; return; } catch(e){}
+    try { const f = (typeof TL_FILE_DIR_URL!=='undefined' && TL_FILE_DIR_URL ? TL_FILE_DIR_URL : '') + name; location.href = f; } catch(_){}
+  }
+  list.addEventListener('click', function(e){
+    const it = e.target.closest('.tl-item.has');
+    if (it) tlOpen(it.dataset.k);
+  });
+  document.getElementById('tabs').addEventListener('click', function(e){
+    const b = e.target.closest('.tab'); if (!b) return;
+    document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x === b));
+    const tab = b.dataset.tab;
+    document.querySelectorAll('[data-tabs]').forEach(c => { c.style.display = (tab !== 'overview' && c.dataset.tabs.split(' ').includes(tab)) ? '' : 'none'; });
+    document.querySelectorAll('[data-ph]').forEach(p => { p.style.display = (p.dataset.ph === tab) ? '' : 'none'; });
+    const br = document.querySelector('.brief'); if (br) br.style.display = (tab === 'overview') ? '' : 'none';
+    if (tab === 'land') initLandMap();
+  });
+const BAIDU_AK = 'DKRCBYbibBqgBE4CuR1oepsAxHaav07i'; // ← 百度地图 JS API 浏览器端 AK（老沐提供，2026-09-20）
+let landMapInited = false;
+function escH(s){ return String(s==null?'':s).replace(/[&<>]/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]); }); }
+function renderLandSvg(){
+  const pts = (LAND_MAP_POINTS||[]);
+  if (!pts.length) return '<div style="padding:24px;color:#9aa0ad;font-size:13px">暂无点位数据（land_geo.json）。</div>';
+  const W=1000, H=440, P=46;
+  const lngs=pts.map(function(p){return p.lng;}), lats=pts.map(function(p){return p.lat;});
+  let mnLng=Math.min.apply(null,lngs), mxLng=Math.max.apply(null,lngs);
+  let mnLat=Math.min.apply(null,lats), mxLat=Math.max.apply(null,lats);
+  const spLng=Math.max(mxLng-mnLng,0.14), spLat=Math.max(mxLat-mnLat,0.12);
+  const cx=(mnLng+mxLng)/2, cy=(mnLat+mxLat)/2;
+  mnLng=cx-spLng/2; mxLng=cx+spLng/2; mnLat=cy-spLat/2; mxLat=cy+spLat/2;
+  const X=function(l){return P+(l-mnLng)/(mxLng-mnLng)*(W-2*P);};
+  const Y=function(l){return H-P-(l-mnLat)/(mxLat-mnLat)*(H-2*P);};
+  let grid='';
+  const stepLng=(mxLng-mnLng)/5, stepLat=(mxLat-mnLat)/5;
+  for(let i=0;i<=5;i++){
+    const xg=X(mnLng+stepLng*i);
+    grid+='<line x1="'+xg+'" y1="'+P+'" x2="'+xg+'" y2="'+(H-P)+'" stroke="#dfe4ea" stroke-width="1"/>';
+    grid+='<text x="'+xg+'" y="'+(H-P+16)+'" font-size="10" fill="#9aa0ad" text-anchor="middle">'+(mnLng+stepLng*i).toFixed(3)+'</text>';
+    const yg=Y(mnLat+stepLat*i);
+    grid+='<line x1="'+P+'" y1="'+yg+'" x2="'+(W-P)+'" y2="'+yg+'" stroke="#dfe4ea" stroke-width="1"/>';
+    grid+='<text x="'+(P-6)+'" y="'+(yg+3)+'" font-size="10" fill="#9aa0ad" text-anchor="end">'+(mnLat+stepLat*i).toFixed(3)+'</text>';
+  }
+  let dots='';
+  pts.forEach(function(p,i){
+    const x=X(p.lng), y=Y(p.lat);
+    const col=(p.status==='成交')?'#C8102E':'#1B5FA8';
+    dots+='<circle cx="'+x+'" cy="'+y+'" r="11" fill="'+col+'" fill-opacity="0.92" stroke="#fff" stroke-width="2"/>';
+    dots+='<text x="'+x+'" y="'+(y+4)+'" font-size="11" fill="#fff" text-anchor="middle" font-weight="700">'+(i+1)+'</text>';
+  });
+  return '<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block;background:#f7f9fc">'+grid+dots+'</svg>';
+}
+function renderLandLegend(){
+  const pts=(LAND_MAP_POINTS||[]);
+  if(!pts.length) return '';
+  return '<div style="display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:#374151">'
+    + pts.map(function(p,i){
+        const col=(p.status==='成交')?'#C8102E':'#1B5FA8';
+        return '<span style="display:inline-flex;align-items:center;gap:5px"><b style="display:inline-block;width:16px;height:16px;line-height:16px;text-align:center;border-radius:50%;background:'+col+';color:#fff;font-size:10px">'+ (i+1) +'</b><span>'+escH(p.name||'')+' <span style="color:#9aa0ad">('+(p.status||'')+'·'+(p.region||'')+(p.usage?('·'+p.usage):'')+')</span></span></span>';
+      }).join('')
+    + '</div>';
+}
+function initLandMap(){
+  if (landMapInited) return; landMapInited = true;
+  const svgWrap=document.getElementById('landSvgWrap');
+  const mapEl=document.getElementById('landMap');
+  const legend=document.getElementById('landMapLegend');
+  const hint=document.getElementById('landMapHint');
+  if(svgWrap) svgWrap.innerHTML = renderLandSvg();
+  if(legend){ try{ legend.innerHTML = renderLandLegend(); }catch(e){ console.warn('land legend render failed', e); } }
+  if(!BAIDU_AK){ if(hint) hint.textContent='（未配置百度 AK，仅显示离线示意地图）'; return; }
+  // 拦截百度 Referer 校验失败弹窗，失败则回退离线 SVG + 提示
+  const _alert = window.alert;
+  window.alert = function(msg){
+    const s=String(msg||'');
+    if(/Referer|白名单|校验失败|ak|AK/i.test(s)){
+      if(mapEl){ mapEl.style.display='none'; mapEl.innerHTML=''; }
+      if(svgWrap){ svgWrap.style.display=''; }
+      if(hint) hint.innerHTML='百度 AK 校验失败（Referer 白名单不匹配）。请到百度地图开放平台把 <b>127.0.0.1</b> / <b>localhost</b>（或填 <b>*</b>）加入该 AK 的 Referer 白名单后刷新页面。';
+      return;
+    }
+    return _alert.call(window, msg);
+  };
+  let bmap=null; let bmapLoading=false;
+  function loadBaidu(){
+    if(bmap||bmapLoading) return; bmapLoading=true;
+    if(hint && !hint.textContent) hint.textContent='正在加载百度地图…';
+    const sc=document.createElement('script');
+    sc.src='https://api.map.baidu.com/api?v=3.0&ak='+encodeURIComponent(BAIDU_AK)+'&callback=__initBaiduMap';
+    sc.onerror=function(){ bmapLoading=false; if(hint) hint.textContent='百度地图脚本加载失败（网络受限）。'; if(svgWrap) svgWrap.style.display=''; if(mapEl){ mapEl.style.display='none'; mapEl.innerHTML=''; } };
+    window.__initBaiduMap=function(){
+      try{
+        if(mapEl) mapEl.style.display='';
+        bmap=new BMap.Map(mapEl);
+        bmap.centerAndZoom(new BMap.Point(120.16,30.27),11);
+        bmap.enableScrollWheelZoom(true);
+        (LAND_MAP_POINTS||[]).forEach(function(p,i){
+          const pt=new BMap.Point(p.lng,p.lat);
+          const col=(p.status==='成交')?'#C8102E':'#1B5FA8';
+          const mk=new BMap.Marker(pt);
+          const lab=new BMap.Label(String(i+1),{offset:new BMap.Size(-8,-30)});
+          lab.setStyle({color:col,borderColor:col,fontSize:'11px',fontWeight:'700',padding:'0px 4px',backgroundColor:'#fff'});
+          mk.setLabel(lab);
+          bmap.addOverlay(mk);
+        });
+        if(svgWrap) svgWrap.style.display='none';
+        if(hint) hint.textContent='';
+      }catch(e){ bmapLoading=false; if(hint) hint.textContent='百度地图初始化失败：'+e.message; if(svgWrap) svgWrap.style.display=''; if(mapEl){ mapEl.style.display='none'; mapEl.innerHTML=''; } }
+    };
+    document.head.appendChild(sc);
+  }
+  // 打开土地 tab 即自动加载百度真实底图（失败由 alert 拦截器回退 SVG + 提示）
+  loadBaidu();
+}
+})();
+
+/* ===== 文字编辑模式（全卡片通用，含未来新增卡片） ===== */
+const OV_KEY = 'kanban_ov_' + TL_CURRENT;
+const EDIT_SEL = '.verdict, .note, .foot, .ph, .metric, .move';
+let EDIT_ON = false;
+function ovCardNo(el){
+  const card = el.closest('[data-tabs],[data-ph]');
+  if (!card) return 'x';
+  const noEl = card.querySelector('.no');
+  return noEl ? noEl.textContent : (card.dataset.ph || 'x');
+}
+function ovKey(el){
+  const card = el.closest('[data-tabs],[data-ph]') || document;
+  const cls = ['verdict','note','foot','ph','metric','move'].filter(c => el.classList.contains(c))[0] || 'txt';
+  const same = [...card.querySelectorAll('.' + cls)];
+  return ovCardNo(el) + '|' + cls + '|' + same.indexOf(el);
+}
+function applyOverrides(map){
+  Object.keys(map || {}).forEach(k => {
+    const parts = k.split('|'); if (parts.length < 3) return;
+    const no = parts[0], cls = parts[1], idx = Number(parts[2]);
+    const card = [...document.querySelectorAll('[data-tabs],[data-ph]')].find(c => {
+      const noEl = c.querySelector('.no');
+      return noEl ? noEl.textContent === no : c.dataset.ph === no;
+    });
+    if (!card) return;
+    const els = [...card.querySelectorAll('.' + cls)];
+    if (els[idx]) els[idx].innerHTML = map[k];
+  });
+}
+function saveOV(){ try { localStorage.setItem(OV_KEY, JSON.stringify(OV)); } catch(e) {} }
+function loadLocalOV(){ try { return JSON.parse(localStorage.getItem(OV_KEY) || '{}'); } catch(e) { return {}; } }
+let OV = Object.assign({}, loadLocalOV(), window.INITIAL_OVERRIDES || {});
+applyOverrides(OV);
+const editBtn = document.getElementById('editBtn');
+function setEdit(on){
+  EDIT_ON = on;
+  document.body.classList.toggle('editing', on);
+  editBtn.classList.toggle('on', on);
+  editBtn.textContent = on ? '✓ 完成编辑' : '✎ 编辑文字';
+  document.querySelectorAll(EDIT_SEL).forEach(el => {
+    if (on) { el.setAttribute('contenteditable', 'true'); el.dataset.k = ovKey(el); }
+    else { el.removeAttribute('contenteditable'); el.removeAttribute('data-k'); }
+  });
+  if (on) {
+    const br = document.querySelector('.brief'); if (br) { [...br.querySelectorAll('p')].forEach(p => { p.setAttribute('contenteditable','true'); }); }
+  } else {
+    document.querySelectorAll('.brief p[contenteditable]').forEach(p => p.removeAttribute('contenteditable'));
+  }
+}
+editBtn.addEventListener('click', () => setEdit(!EDIT_ON));
+document.addEventListener('input', e => {
+  if (!EDIT_ON || !e.target.closest) return;
+  const el = e.target.closest(EDIT_SEL) || (e.target.matches && e.target.matches('.brief p') ? e.target : null);
+  if (!el) return;
+  if (!el.dataset.k) el.dataset.k = el.closest('.brief') ? 'brief|p|' + [...document.querySelectorAll('.brief p')].indexOf(el) : ovKey(el);
+  OV[el.dataset.k] = el.innerHTML;
+  clearTimeout(window.__ovT); window.__ovT = setTimeout(saveOV, 400);
+});
+document.getElementById('exportOvBtn').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(OV, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'overrides_' + TL_CURRENT + '.json';
+  a.click();
+});
+document.getElementById('clearOvBtn').addEventListener('click', () => {
+  localStorage.removeItem(OV_KEY);
+  OV = Object.assign({}, window.INITIAL_OVERRIDES || {});
+  location.reload();
+});
+</script>
+
+<div id="tip"></div>
+<script>
+(function(){
+  var tip=document.getElementById("tip");
+  document.addEventListener("mousemove",function(e){
+    var t=e.target;
+    while(t&&t.getAttribute&&!t.getAttribute("data-tip"))t=t.parentElement;
+    if(t&&t.getAttribute&&t.getAttribute("data-tip")){
+      tip.style.display="block";
+      tip.textContent=t.getAttribute("data-tip");
+      var x=e.clientX+14,y=e.clientY+14;
+      if(x+tip.offsetWidth>window.innerWidth-8)x=e.clientX-tip.offsetWidth-10;
+      if(y+tip.offsetHeight>window.innerHeight-8)y=e.clientY-tip.offsetHeight-10;
+      tip.style.left=x+"px";tip.style.top=y+"px";
+    }else{tip.style.display="none";}
+  });
+})();
+</script>
+</body>
+</html>
