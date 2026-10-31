@@ -360,7 +360,6 @@ body.present .pgno{position:fixed;right:20px;bottom:16px;color:#8A8378;
     <a class="ni" href="#cover" data-t="cover" data-page-node-id="mNo6tDtPyHDvz490gsfEHw"><span class="nn" data-page-node-id="SMFc8muGxvshkdBpSrP3it">封</span><span class="nl" data-page-node-id="LujMx2czbq7rPua71oqRNm">封面</span></a><a class="ni" href="#m01" data-t="m01" data-page-node-id="9pAf3Xbe1EXlkwsSz1Va8V"><span class="nn" data-page-node-id="Mcy10jYUMYg6mqpa9HkiW3">01</span><span class="nl" data-page-node-id="dB8uTfZYbYFiBw9knBl2uG">市场体感</span></a><a class="ni" href="#m03" data-t="m03" data-page-node-id="yMK56lIz6tx7q87wYi1ZyR"><span class="nn" data-page-node-id="lAOibGYXh5sdF2xnqmVIK2">02</span><span class="nl" data-page-node-id="SuYPdHJGEfiZ722KzgcArw">土地市场</span></a><a class="ni" href="#m04" data-t="m04" data-page-node-id="2N9aRu4igHqzrG0lusn4DC"><span class="nn" data-page-node-id="7p47d2ymCix7Wr12ZY20Va">03</span><span class="nl" data-page-node-id="uePMXP91dctj2G9ml9FabD">新房供求</span></a><a class="ni" href="#m05" data-t="m05" data-page-node-id="LDBklyjFmNDpLvNI0KHlXQ"><span class="nn" data-page-node-id="2A9evIdrho5e7NaKA76ZDR">04</span><span class="nl" data-page-node-id="qiw4NPCHRxHWWg2IYeHWli">二手市场</span></a><a class="ni" href="#m06" data-t="m06" data-page-node-id="2svUnAiOL97EMJrj9GQfT0"><span class="nn" data-page-node-id="9ZD1q8zTWvrwtbjJmjJ9GK">05</span><span class="nl" data-page-node-id="9QmZZMnRY172xwTFUoL2Uz">指标盘监测</span></a><a class="ni" href="#m11" data-t="m11" data-page-node-id="kkH6THo48lUXjqROo9safk"><span class="nn" data-page-node-id="K7IsClrrymz0DIAwxep5X3">06</span><span class="nl" data-page-node-id="Kny57Pz18nlFsq9z0aJ7Dg">竞品监测</span></a><a class="ni" href="#m10" data-t="m10" data-page-node-id="jLFZ6lgaR1k6mBglSrlGhZ"><span class="nn" data-page-node-id="EHkeWl7hk2pDz2I7VM28Eb">07</span><span class="nl" data-page-node-id="SevBvl4XkwY8BLk7amyQPV">在售项目异动</span></a><a class="ni active" href="#m08" data-t="m08" data-page-node-id="A1zCiqUCKRg1tYiHmkr89h"><span class="nn" data-page-node-id="vOprjxv6xUo7CuDrVTFIsm">08</span><span class="nl" data-page-node-id="qnCu6Ykbr2W0YXFAnrbuAI">开盘监测</span></a><a class="ni" href="#m09" data-t="m09" data-page-node-id="pLJzHyGvYtSCVge4KymFt7"><span class="nn" data-page-node-id="Azteg2mPTsuNyIQkc4CDWy">09</span><span class="nl" data-page-node-id="kZfxwTu8XjfhWbQnCuunOh">报规公示</span></a>
     <div class="nact" data-page-node-id="MB2pXu7AV4nxu3qoZDFzvi">
       <button class="nbtn" id="btnFull" type="button" data-page-node-id="WkWOfKr9oFnm0KGFTpJhS6"><span class="nbi" data-page-node-id="GCOCc5D6ZgAXUE59LPXJk9">⛶</span>全屏播放</button>
-      <button class="nbtn" id="btnPdf" type="button" data-page-node-id="dR31MKYBMqsuHThI7RaX3p"><span class="nbi" data-page-node-id="FfuChCJA9m6nD4zUFHBjsm">⇩</span>导出为 PDF</button>
     </div>
   </aside>
   <main class="main" data-page-node-id="wlNlbjtivX6MXH5G5AhdFt">
@@ -570,9 +569,9 @@ const io=new IntersectionObserver(es=>{
 },{rootMargin:'-15% 0px -70% 0px'});
 document.querySelectorAll('section[id]').forEach(s=>io.observe(s));
 
-/* 导航底部按钮：全屏播放 / 导出 PDF（2026-10-31） */
+/* 导航按钮：全屏播放（2026-10-31；导出 PDF 已于同日取消） */
 (function(){
-  var bf=document.getElementById('btnFull'), bp=document.getElementById('btnPdf');
+  var bf=document.getElementById('btnFull');   /* 2026-10-31 老沐：导出 PDF 功能已取消 */
   if(bf){ bf.addEventListener('click', function(){
     var d=document.documentElement;
     if(!document.fullscreenElement && !document.webkitFullscreenElement){
@@ -581,7 +580,6 @@ document.querySelectorAll('section[id]').forEach(s=>io.observe(s));
       (document.exitFullscreen||document.webkitExitFullscreen||function(){}).call(document);
     }
   }); }
-  if(bp){ bp.addEventListener('click', function(){ window.print(); }); }
 })();
 
 
