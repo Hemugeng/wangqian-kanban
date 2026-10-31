@@ -336,7 +336,23 @@ body.present .pgno{position:fixed;right:20px;bottom:16px;color:#8A8378;
 :fullscreen .main .page{border-radius:0;box-shadow:none;margin:0}
 
 </style>
-<script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&amp;key=3AXBZ-7NWLT-RV6XX-VHXZY-V7IVV-NHFW2&amp;callback=__m3init"></script><style type="text/css">@media screen{.smnoscreen {display:none}} @media print{.smnoprint{display:none}}</style><style id="__dm_no_drag_style__">* { -webkit-user-drag: none !important; }</style><style id="__dm_bindable_badge_style__">[data-sp-bindable="database"]{outline:1px dashed #0088ff;outline-offset:2px;border-radius:4px;}[data-sp-bindable="database"] *{pointer-events:none !important;transition:none !important;animation:none !important;}[data-sp-bindable="database"]{transition:none !important;animation:none !important;}</style></head>
+<script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&amp;key=3AXBZ-7NWLT-RV6XX-VHXZY-V7IVV-NHFW2&amp;callback=__m3init"></script><style type="text/css">@media screen{.smnoscreen {display:none}} @media print{.smnoprint{display:none}}</style><style id="__dm_no_drag_style__">* { -webkit-user-drag: none !important; }</style><style id="__dm_bindable_badge_style__">[data-sp-bindable="database"]{outline:1px dashed #0088ff;outline-offset:2px;border-radius:4px;}[data-sp-bindable="database"] *{pointer-events:none !important;transition:none !important;animation:none !important;}[data-sp-bindable="database"]{transition:none !important;animation:none !important;}</style><style id="navTopOverride">
+/* ===== 2026-10-31 老沐：导航改顶部横排 + 位置冻结（sticky）试运行 =====
+   只做显示层覆盖，不动任何数据/脚本；要回退删掉本段即可。 */
+.layout{flex-direction:column;align-items:stretch;gap:0}
+.nav{position:sticky;top:0;z-index:99;flex:none;width:auto;
+  display:flex;flex-direction:row;align-items:center;flex-wrap:wrap;gap:2px;
+  padding:7px 12px;margin:0 0 16px;border-radius:12px;
+  box-shadow:0 4px 18px rgba(60,45,25,.16)}
+.nav .brand{border-bottom:none;margin:0 8px 0 2px;padding:2px 4px;white-space:nowrap}
+.ni{margin:0;padding:6px 9px;white-space:nowrap;flex:0 0 auto}
+.ni .nn{flex:none}
+.ni .nl{font-size:13px}
+.nact{margin:0 0 0 auto;padding:0;border-top:none;flex-direction:row;gap:6px;align-items:center}
+.nbtn{padding:6px 12px;white-space:nowrap}
+.main .page{scroll-margin-top:72px}
+</style>
+</head>
 <body data-page-node-id="okTiDI8L7EPemEJNoIwci4" style="">
 <div class="layout" data-page-node-id="F6mXwExDwOHGhNsyOSvwDr">
   <aside class="nav" data-page-node-id="dZpwgGyTboQkNbky36uW8D">
