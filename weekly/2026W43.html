@@ -650,49 +650,59 @@ document.querySelectorAll('section[id]').forEach(s=>io.observe(s));
   applyZoom();
 })();
 
-/* ===== 手机放大浏览：导航栏跟随可视视口 v2（2026-11-02 老沐）=====
+/* ===== 手机放大浏览：导航栏跟随可视视口 v3（2026-11-02 老沐）=====
    pinch-zoom 后 sticky/fixed 都锚在「布局视口」，往下平移就滚出屏幕——移动浏览器固有行为。
-   v2 实测校准式（v1 的 transform 理论换算在真机上失效）：放大状态下导航转 fixed，
-   每帧用 getBoundingClientRect 实测当前视觉位置，与 visualViewport.offsetTop/Left 的
-   差值直接纠偏（servo 闭环，不依赖任何 zoom 换算假设）；宽度按实测缩放系数校准；
-   250ms 慢轮询兜底（防个别 webview 不派发 visualViewport 事件）。缩回 1 倍即还原。 */
+   v3（克隆 overlay，v2 servo 的空白内容根因：.nav 在 zoom:0.45 子树内，放大时内容渲染被缩放吞掉）：
+   放大时把导航**克隆到 body 顶层**（彻底脱离 zoom 子树，字号原生可读），body 级 fixed 元素
+   `top = visualViewport.offsetTop` 精确放置——无 zoom 祖先、无单位换算，语义完全确定；
+   同时隐藏原导航防双条；缩回 1 倍删除克隆并还原。全屏按钮在克隆内重新绑定。 */
 (function(){
   var nav=document.querySelector('.nav');
   var vv=window.visualViewport;
   if(!nav||!vv) return;
-  var on=false, raf=0, sy=0, sx=0;
-  function apply(){
-    var r=nav.getBoundingClientRect();
-    var ey=vv.offsetTop - r.top, ex=vv.offsetLeft - r.left;
-    if(Math.abs(ey)>0.5){ sy+=ey; nav.style.top=sy+'px'; }
-    if(Math.abs(ex)>0.5){ sx+=ex; nav.style.left=sx+'px'; }
+  var fix=null, on=false;
+  function place(){
+    fix.style.top=vv.offsetTop+'px';
+    fix.style.left=vv.offsetLeft+'px';
+    fix.style.width=vv.width+'px';
   }
-  function loop(){ if(!on) return; apply(); raf=requestAnimationFrame(loop); }
   function engage(){
-    on=true; sy=0; sx=0;
-    nav.style.position='fixed';
-    nav.style.top='0px'; nav.style.left='0px';
-    nav.style.zIndex='999';
-    nav.style.borderRadius='0';
-    nav.style.boxShadow='0 2px 12px rgba(60,45,25,.28)';
-    var r0=nav.getBoundingClientRect();
-    var _k=r0.width>0 ? r0.width/nav.offsetWidth : 1;      // 实测缩放系数（含页面 zoom）
-    nav.style.width=(vv.width/_k)+'px';
-    apply(); raf=requestAnimationFrame(loop);
+    on=true;
+    fix=document.createElement('div');
+    fix.setAttribute('data-navfix','1');
+    fix.style.cssText='position:fixed;z-index:9999;background:#fff;'+
+      'box-shadow:0 2px 12px rgba(60,45,25,.3);overflow:hidden';
+    var c=nav.cloneNode(true);
+    c.removeAttribute('style');
+    c.style.position='static';
+    c.style.width='100%';
+    c.style.borderRadius='0';
+    c.style.boxShadow='none';
+    fix.appendChild(c);
+    document.body.appendChild(fix);
+    nav.style.visibility='hidden';
+    var bf=fix.querySelector('#btnFull');          // 克隆不带事件 → 全屏按钮重新绑定
+    if(bf) bf.addEventListener('click', function(){
+      var d=document.documentElement;
+      if(!document.fullscreenElement && !document.webkitFullscreenElement){
+        (d.requestFullscreen||d.webkitRequestFullscreen||function(){}).call(d);
+      } else {
+        (document.exitFullscreen||document.webkitExitFullscreen||function(){}).call(document);
+      }
+    });
+    place();
   }
   function release(){
     on=false;
-    if(raf) cancelAnimationFrame(raf);
-    nav.style.position=''; nav.style.top=''; nav.style.left='';
-    nav.style.width=''; nav.style.zIndex=''; nav.style.borderRadius='';
-    nav.style.boxShadow='';
+    if(fix){ fix.remove(); fix=null; }
+    nav.style.visibility='';
   }
   function upd(){
-    if(document.body.classList.contains('present')) return;
+    if(document.body.classList.contains('present')){ if(on) release(); return; }
     var zoomed=(vv.scale||1)>1.02 || vv.height<window.innerHeight*0.92;
     if(zoomed && !on) engage();
     else if(!zoomed && on) release();
-    else if(on) apply();
+    else if(on) place();
   }
   vv.addEventListener('scroll', upd, {passive:true});
   vv.addEventListener('resize', upd);
