@@ -649,6 +649,51 @@ document.querySelectorAll('section[id]').forEach(s=>io.observe(s));
   window.addEventListener('mousemove', function(){ if(isPresent()) flashHint(); }, {passive:true});
   applyZoom();
 })();
+
+/* ===== 手机放大浏览：导航栏跟随可视视口（2026-11-02 老沐）=====
+   pinch-zoom 后 sticky/fixed 都锚在「布局视口」，往下平移导航就滚出屏幕——移动浏览器固有行为。
+   解法：监听 visualViewport，放大状态下把导航转为 fixed 并按 offset 平移补偿，
+   钉在**可视区域**顶部；缩小回 1 倍即还原。单位补偿：.layout 有 zoom(k)，导航内
+   的 px 会被 k 缩放，故 offset 需除以 k。 */
+(function(){
+  var nav=document.querySelector('.nav');
+  var vv=window.visualViewport;
+  if(!nav||!vv) return;
+  var on=false;
+  function k(){
+    var lay=document.querySelector('.layout');
+    var z=lay?parseFloat(getComputedStyle(lay).zoom):1;
+    return (z&&z>0)?z:1;
+  }
+  function upd(){
+    if(document.body.classList.contains('present')) return;   // 演示模式本就隐藏导航
+    var sc=vv.scale||1;
+    if(sc>1.02 && !on){
+      on=true;
+      nav.style.position='fixed';
+      nav.style.top='0px'; nav.style.left='0px';
+      nav.style.zIndex='999';
+      nav.style.borderRadius='0';
+      nav.style.boxShadow='0 2px 12px rgba(60,45,25,.28)';
+    }
+    if(sc<=1.02 && on){
+      on=false;
+      nav.style.position=''; nav.style.top=''; nav.style.left='';
+      nav.style.zIndex=''; nav.style.borderRadius='';
+      nav.style.boxShadow=''; nav.style.width=''; nav.style.transform='';
+      return;
+    }
+    if(on){
+      var _k=k();
+      nav.style.width=(vv.width/_k)+'px';
+      nav.style.transform='translate('+(vv.offsetLeft/_k)+'px,'+(vv.offsetTop/_k)+'px)';
+    }
+  }
+  vv.addEventListener('scroll', upd, {passive:true});
+  vv.addEventListener('resize', upd);
+  window.addEventListener('scroll', upd, {passive:true});
+  upd();
+})();
 </script>
 </body>
 </html>
