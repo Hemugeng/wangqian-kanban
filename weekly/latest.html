@@ -650,48 +650,55 @@ document.querySelectorAll('section[id]').forEach(s=>io.observe(s));
   applyZoom();
 })();
 
-/* ===== 手机放大浏览：导航栏跟随可视视口（2026-11-02 老沐）=====
-   pinch-zoom 后 sticky/fixed 都锚在「布局视口」，往下平移导航就滚出屏幕——移动浏览器固有行为。
-   解法：监听 visualViewport，放大状态下把导航转为 fixed 并按 offset 平移补偿，
-   钉在**可视区域**顶部；缩小回 1 倍即还原。单位补偿：.layout 有 zoom(k)，导航内
-   的 px 会被 k 缩放，故 offset 需除以 k。 */
+/* ===== 手机放大浏览：导航栏跟随可视视口 v2（2026-11-02 老沐）=====
+   pinch-zoom 后 sticky/fixed 都锚在「布局视口」，往下平移就滚出屏幕——移动浏览器固有行为。
+   v2 实测校准式（v1 的 transform 理论换算在真机上失效）：放大状态下导航转 fixed，
+   每帧用 getBoundingClientRect 实测当前视觉位置，与 visualViewport.offsetTop/Left 的
+   差值直接纠偏（servo 闭环，不依赖任何 zoom 换算假设）；宽度按实测缩放系数校准；
+   250ms 慢轮询兜底（防个别 webview 不派发 visualViewport 事件）。缩回 1 倍即还原。 */
 (function(){
   var nav=document.querySelector('.nav');
   var vv=window.visualViewport;
   if(!nav||!vv) return;
-  var on=false;
-  function k(){
-    var lay=document.querySelector('.layout');
-    var z=lay?parseFloat(getComputedStyle(lay).zoom):1;
-    return (z&&z>0)?z:1;
+  var on=false, raf=0, sy=0, sx=0;
+  function apply(){
+    var r=nav.getBoundingClientRect();
+    var ey=vv.offsetTop - r.top, ex=vv.offsetLeft - r.left;
+    if(Math.abs(ey)>0.5){ sy+=ey; nav.style.top=sy+'px'; }
+    if(Math.abs(ex)>0.5){ sx+=ex; nav.style.left=sx+'px'; }
+  }
+  function loop(){ if(!on) return; apply(); raf=requestAnimationFrame(loop); }
+  function engage(){
+    on=true; sy=0; sx=0;
+    nav.style.position='fixed';
+    nav.style.top='0px'; nav.style.left='0px';
+    nav.style.zIndex='999';
+    nav.style.borderRadius='0';
+    nav.style.boxShadow='0 2px 12px rgba(60,45,25,.28)';
+    var r0=nav.getBoundingClientRect();
+    var _k=r0.width>0 ? r0.width/nav.offsetWidth : 1;      // 实测缩放系数（含页面 zoom）
+    nav.style.width=(vv.width/_k)+'px';
+    apply(); raf=requestAnimationFrame(loop);
+  }
+  function release(){
+    on=false;
+    if(raf) cancelAnimationFrame(raf);
+    nav.style.position=''; nav.style.top=''; nav.style.left='';
+    nav.style.width=''; nav.style.zIndex=''; nav.style.borderRadius='';
+    nav.style.boxShadow='';
   }
   function upd(){
-    if(document.body.classList.contains('present')) return;   // 演示模式本就隐藏导航
-    var sc=vv.scale||1;
-    if(sc>1.02 && !on){
-      on=true;
-      nav.style.position='fixed';
-      nav.style.top='0px'; nav.style.left='0px';
-      nav.style.zIndex='999';
-      nav.style.borderRadius='0';
-      nav.style.boxShadow='0 2px 12px rgba(60,45,25,.28)';
-    }
-    if(sc<=1.02 && on){
-      on=false;
-      nav.style.position=''; nav.style.top=''; nav.style.left='';
-      nav.style.zIndex=''; nav.style.borderRadius='';
-      nav.style.boxShadow=''; nav.style.width=''; nav.style.transform='';
-      return;
-    }
-    if(on){
-      var _k=k();
-      nav.style.width=(vv.width/_k)+'px';
-      nav.style.transform='translate('+(vv.offsetLeft/_k)+'px,'+(vv.offsetTop/_k)+'px)';
-    }
+    if(document.body.classList.contains('present')) return;
+    var zoomed=(vv.scale||1)>1.02 || vv.height<window.innerHeight*0.92;
+    if(zoomed && !on) engage();
+    else if(!zoomed && on) release();
+    else if(on) apply();
   }
   vv.addEventListener('scroll', upd, {passive:true});
   vv.addEventListener('resize', upd);
   window.addEventListener('scroll', upd, {passive:true});
+  window.addEventListener('resize', upd);
+  setInterval(upd, 250);        // 慢轮询兜底：个别 webview 不派发 visualViewport 事件
   upd();
 })();
 </script>
